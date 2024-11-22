@@ -1,7 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+using SchoolManagementApp.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<SchoolManagementDbContext>(options =>
+{
+    options.UseSqlite(
+        builder.Configuration["ConnectionStrings:SchoolDBConnection"]);
+});
 
 var app = builder.Build();
 
