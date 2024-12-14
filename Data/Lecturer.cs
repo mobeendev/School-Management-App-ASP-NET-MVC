@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SchoolManagementApp.Data
 {
-    public class Lecturer
+    public partial class Lecturer
     {
 
         public int Id { get; set; }
