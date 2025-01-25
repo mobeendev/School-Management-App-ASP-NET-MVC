@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace SchoolManagementApp.Data
 {
-    public class SchoolManagementDbContext : DbContext
+    public class SchoolManagementDbContext : IdentityDbContext<ApplicationUser>
     {
 
         public SchoolManagementDbContext(DbContextOptions<SchoolManagementDbContext> options) : base(options)

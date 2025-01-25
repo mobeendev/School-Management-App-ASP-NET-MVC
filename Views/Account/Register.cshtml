@@ -1,0 +1,100 @@
+﻿@model SchoolManagementApp.ViewModels.RegisterViewModel
+
+@{
+}
+
+
+<div class="container mx-auto">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-6">
+
+            <h1 class="mt-3 mb-3 h3">
+                Register
+            </h1>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach (var state in ViewData.ModelState.Values)
+                        {
+                            foreach (var error in state.Errors)
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        }
+                    </ul>
+                </div>
+            }
+
+            <form method="post">
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <input type="text" id="username" class="form-control" asp-for="Username" required />
+                    <span class="text-danger" asp-validation-for="Username"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="email" class="form-control" asp-for="Email" required />
+                    <span class="text-danger" asp-validation-for="Email"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="password" class="form-control" asp-for="Password" required
+                        minlength="6" />
+                    <span class="text-danger" asp-validation-for="Password"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ConfirmPassword" class="control-label"></label>
+                    <input asp-for="ConfirmPassword" class="form-control" type="password" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="FirstName"></label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="LastName"></label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DateOfBirth"></label>
+                    <input asp-for="DateOfBirth" class="form-control" />
+                    <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                </div>
+
+                <!-- Gender Dropdown -->
+                <div class="form-group">
+                    <label asp-for="Gender" class="control-label"></label>
+                    <select asp-for="Gender" class="form-control" asp-items="ViewBag.Genders">
+                        <option value="">-- Select Gender --</option>
+                    </select>
+                    <span asp-validation-for="Gender" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Address" class="control-label"></label>
+                    <input asp-for="Address" class="form-control" />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="PhoneNumber" class="control-label"></label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-dark">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

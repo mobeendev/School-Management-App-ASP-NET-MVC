@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> signInManager
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -6,7 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - School Management System ASP NET MVC</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.2.0/css/bootstrap.min.css" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.2.0/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
@@ -31,19 +35,40 @@
                                 asp-action="About">About</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Courses" asp-action="Index">Courses</a>
-                        </li>
-                          <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Lecturers" asp-action="Index">Lecturers</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Courses"
+                                asp-action="Index">Courses</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Students" asp-action="Index">Students</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Lecturers"
+                                asp-action="Index">Lecturers</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home"
-                                asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Students"
+                                asp-action="Index">Students</a>
                         </li>
                     </ul>
+                    <div class="d-flex align-items-center">
+
+                        @if (signInManager.IsSignedIn(User))
+                        {
+                            <div class="me-3 text-light">
+                                @User?.Identity?.Name
+                            </div>
+
+                            <a class="btn me-3 bg-light text-dark" asp-area="" asp-controller="Account"
+                                asp-action="Logout">Logout</a>
+                        }
+                        else
+                        {
+                            <a class="btn me-3 bg-light text-dark" asp-area="" asp-controller="Account"
+                                asp-action="Login">Login</a>
+
+                            <a class="btn me-3 bg-light text-dark" asp-area="" asp-controller="Account"
+                                asp-action="Register">Register</a>
+
+                        }
+
+                    </div>
                 </div>
             </div>
         </nav>

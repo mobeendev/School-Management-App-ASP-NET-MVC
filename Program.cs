@@ -1,17 +1,20 @@
 using Microsoft.EntityFrameworkCore;
 using SchoolManagementApp.Data;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<SchoolManagementDbContext>(options =>
-{
-    options.UseSqlite(
-        builder.Configuration["ConnectionStrings:SchoolDBConnection"]);
-});
+options.UseSqlite(builder.Configuration.GetConnectionString("SchoolDBConnection")));
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<SchoolManagementDbContext>();
 
 var app = builder.Build();
+
+// Seed roles and users
+await DataSeeder.SeedRolesAndUsers(app);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
