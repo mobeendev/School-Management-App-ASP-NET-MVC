@@ -16,32 +16,37 @@
                 @Html.DisplayNameFor(model => model.Time)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Course)
+                @Html.DisplayNameFor(model => model.Course.Name)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Lecturer)
+            </th>
+              <th>
+               Action
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Time)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Course.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Lecturer.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Time)
+                </td>
+                 <td>
+                    @(item.Lecturer != null ? item.Course.Name : "No Course Assigned")
+                </td>
+
+                 <td>
+                    @(item.Lecturer != null ? item.Lecturer.FirstName + " " + item.Lecturer.LastName : "No Lecturer Assigned")
+                </td>
+                 <td>
+                    <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    <button data-id="@item.Id" class="btn btn-danger deleteBtn" type="button">Delete</button>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

@@ -6,16 +6,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SchoolManagementApp.Data;
+using SchoolManagementApp.Services;
 
 namespace SchoolManagementApp.Controllers
 {
     public class ClassesController : Controller
     {
         private readonly SchoolManagementDbContext _context;
+        private readonly DropdownService _dropdownService;
 
-        public ClassesController(SchoolManagementDbContext context)
+        public ClassesController(SchoolManagementDbContext context, DropdownService dropdownService)
         {
             _context = context;
+            _dropdownService = dropdownService;
         }
 
         // GET: Classes
@@ -48,8 +51,10 @@ namespace SchoolManagementApp.Controllers
         // GET: Classes/Create
         public IActionResult Create()
         {
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id");
-            ViewData["LecturerId"] = new SelectList(_context.Lecturers, "Id", "Id");
+
+            ViewData["CourseId"] = _dropdownService.GetCourses();
+            ViewData["LecturerId"] = _dropdownService.GetLecturers();
+
             return View();
         }
 
@@ -64,8 +69,9 @@ namespace SchoolManagementApp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id", @class.CourseId);
-            ViewData["LecturerId"] = new SelectList(_context.Lecturers, "Id", "Id", @class.LecturerId);
+            ViewData["CourseId"] = _dropdownService.GetCourses();
+            ViewData["LecturerId"] = _dropdownService.GetLecturers();
+
             return View(@class);
         }
 
@@ -83,8 +89,10 @@ namespace SchoolManagementApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id", @class.CourseId);
-            ViewData["LecturerId"] = new SelectList(_context.Lecturers, "Id", "Id", @class.LecturerId);
+
+            ViewData["CourseId"] = _dropdownService.GetCourses();
+            ViewData["LecturerId"] = _dropdownService.GetLecturers();
+
             return View(@class);
         }
 
@@ -118,8 +126,10 @@ namespace SchoolManagementApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id", @class.CourseId);
-            ViewData["LecturerId"] = new SelectList(_context.Lecturers, "Id", "Id", @class.LecturerId);
+
+            ViewData["CourseId"] = _dropdownService.GetCourses();
+            ViewData["LecturerId"] = _dropdownService.GetLecturers();
+
             return View(@class);
         }
 
@@ -150,7 +160,7 @@ namespace SchoolManagementApp.Controllers
         {
             if (_context.Classes == null)
             {
-                return Problem("Entity set 'SchoolManagementDbContext.Classes'  is null.");
+                return Problem("Entity set 'SchoolManagementDbContext.Classes' is null.");
             }
             var @class = await _context.Classes.FindAsync(id);
             if (@class != null)
