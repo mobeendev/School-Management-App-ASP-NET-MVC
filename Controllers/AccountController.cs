@@ -90,7 +90,7 @@ namespace SchoolManagementApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult Login(string ReturnUrl)
+        public IActionResult Login(string? ReturnUrl = null)
         {
             var model = new LoginViewModel
             {
@@ -104,7 +104,7 @@ namespace SchoolManagementApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel loginViewModel)
         {
-            var user = await userManager.FindByEmailAsync(loginViewModel.Username);
+            var user = await userManager.FindByEmailAsync(loginViewModel.Email);
             if (user == null)
             {
                 // User not found
@@ -131,7 +131,7 @@ namespace SchoolManagementApp.Controllers
                 return View();
             }
 
-            var signInResult = await signInManager.PasswordSignInAsync(loginViewModel.Username,
+            var signInResult = await signInManager.PasswordSignInAsync(loginViewModel.Email,
                 loginViewModel.Password, false, false);
 
             if (signInResult.IsLockedOut)
