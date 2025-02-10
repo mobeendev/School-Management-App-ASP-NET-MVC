@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SchoolManagementApp.Data;
+using SchoolManagementApp.Services;
 
 namespace SchoolManagementApp.Controllers
 {
@@ -14,17 +15,24 @@ namespace SchoolManagementApp.Controllers
     public class EnrollmentsController : Controller
     {
         private readonly SchoolManagementDbContext _context;
+        private readonly DropdownService _dropdownService;
 
-        public EnrollmentsController(SchoolManagementDbContext context)
+        public EnrollmentsController(SchoolManagementDbContext context, DropdownService dropdownService)
         {
             _context = context;
+            _dropdownService = dropdownService;
         }
 
         // GET: Enrollments
         public async Task<IActionResult> Index()
         {
-            var schoolManagementDbContext = _context.Enrollments.Include(e => e.Class).Include(e => e.Student);
-            return View(await schoolManagementDbContext.ToListAsync());
+            var enrollments = await _context.Enrollments
+                                            .Include(e => e.Student)
+                                            .Include(e => e.Class)
+                                            .ThenInclude(c => c.Course)
+                                            .ToListAsync();
+            return View(enrollments);
+
         }
 
         // GET: Enrollments/Details/5
@@ -50,8 +58,9 @@ namespace SchoolManagementApp.Controllers
         // GET: Enrollments/Create
         public IActionResult Create()
         {
-            ViewData["ClassId"] = new SelectList(_context.Classes, "Id", "Course");
-            ViewData["StudentId"] = new SelectList(_context.Students, "Id", "Id");
+            ViewData["ClassId"] = _dropdownService.GetClasses();
+            ViewData["StudentId"] = _dropdownService.GetStudents();
+
             return View();
         }
 
@@ -68,26 +77,27 @@ namespace SchoolManagementApp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClassId"] = new SelectList(_context.Classes, "Id", "Id", enrollment.ClassId);
-            ViewData["StudentId"] = new SelectList(_context.Students, "Id", "Id", enrollment.StudentId);
+            ViewData["ClassId"] = _dropdownService.GetClasses();
+            ViewData["StudentId"] = _dropdownService.GetStudents();
             return View(enrollment);
         }
 
         // GET: Enrollments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Enrollments == null)
-            {
-                return NotFound();
-            }
+            // if (id == null || _context.Enrollments == null)
+            // {
+            //     return NotFound();
+            // }
 
             var enrollment = await _context.Enrollments.FindAsync(id);
-            if (enrollment == null)
-            {
-                return NotFound();
-            }
-            ViewData["ClassId"] = new SelectList(_context.Classes, "Id", "Id", enrollment.ClassId);
-            ViewData["StudentId"] = new SelectList(_context.Students, "Id", "Id", enrollment.StudentId);
+            // if (enrollment == null)
+            // {
+            //     return NotFound();
+            // }
+            ViewData["ClassId"] = _dropdownService.GetClasses();
+            ViewData["StudentId"] = _dropdownService.GetStudents();
+
             return View(enrollment);
         }
 

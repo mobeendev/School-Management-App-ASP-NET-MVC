@@ -32,10 +32,12 @@
                     @Html.DisplayFor(modelItem => item.Grade)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Class.Id)
+                    @(item.Class != null && item.Class.Course != null ? item.Class.Course.Name + " / " +
+                        item.Class.Course.Code + " / " + item.Class.Course.Credits :
+                        "No Class/Student found")
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Student.Id)
+                    @(item.Student != null ? item.Student.FirstName + " " + item.Student.LastName : "No Student found")
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

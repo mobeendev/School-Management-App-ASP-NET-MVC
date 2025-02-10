@@ -25,7 +25,14 @@ namespace SchoolManagementApp.Controllers
         public async Task<IActionResult> Index()
         {
             var schoolManagementDbContext = _context.Classes.Include(q => q.Course).Include(q => q.Lecturer);
-            return View(await schoolManagementDbContext.ToListAsync());
+
+
+            return schoolManagementDbContext != null ?
+                   View(await schoolManagementDbContext.ToListAsync()) :
+                   Problem("Entity set 'SchoolManagementDbContext.Courses'  is null.");
+
+
+            // return View(await schoolManagementDbContext.ToListAsync());
         }
 
         // GET: Classes/Details/5
