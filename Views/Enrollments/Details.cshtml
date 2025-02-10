@@ -1,36 +1,59 @@
-@model SchoolManagementApp.Data.Course
+@model SchoolManagementApp.Data.Enrollment
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Enrollment Details";
 }
 
-<h1>Details</h1>
+<h2>Enrollment Details</h2>
 
 <div>
-    <h4>Course</h4>
+    <h4>Enrollment ID: @Model.Id</h4>
     <hr />
+
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
+        <!-- Student Details -->
+        <dt class="col-sm-3">Student Name:</dt>
+        <dd class="col-sm-9">
+            @(Model.Student != null ? Model.Student.FirstName + " " + Model.Student.LastName : "No Student Found")
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Code)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Code)
+
+        <!-- Class ID -->
+        <dt class="col-sm-3">Class ID:</dt>
+        <dd class="col-sm-9">@Model.ClassId</dd>
+
+        <!-- Course Details -->
+        <dt class="col-sm-3">Course Name:</dt>
+        <dd class="col-sm-9">
+            @(Model.Class != null && Model.Class.Course != null ? Model.Class.Course.Name : "No Course Assigned")
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Credits)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Credits)
+
+        <dt class="col-sm-3">Course Code:</dt>
+        <dd class="col-sm-9">
+            @(Model.Class != null && Model.Class.Course != null ? Model.Class.Course.Code : "N/A")
+        </dd>
+
+        <!-- Lecturer Details (If needed) -->
+        <dt class="col-sm-3">Lecturer:</dt>
+        <dd class="col-sm-9">
+            @(Model.Class != null && Model.Class.Lecturer != null ? Model.Class.Lecturer.FirstName  + " " + Model.Class.Lecturer.LastName : "No Lecturer Assigned")
+        </dd>
+
+        <!-- Class Time -->
+        <dt class="col-sm-3">Class Time:</dt>
+        <dd class="col-sm-9">
+            @(Model.Class != null && Model.Class.Time.HasValue ? Model.Class.Time.ToString() : "Not Scheduled")
+        </dd>
+
+        <!-- Grade -->
+        <dt class="col-sm-3">Grade:</dt>
+        <dd class="col-sm-9">
+            @(string.IsNullOrEmpty(Model.Grade) ? "Not Graded" : Model.Grade)
         </dd>
     </dl>
 </div>
+
+<!-- Back to List and Edit Buttons -->
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 </div>

@@ -31,22 +31,33 @@ namespace SchoolManagementApp.Controllers
                                             .Include(e => e.Class)
                                             .ThenInclude(c => c.Course)
                                             .ToListAsync();
+
+
+
             return View(enrollments);
 
         }
 
-        // GET: Enrollments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Enrollments == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
+            // var enrollment = await _context.Enrollments
+            //     .Include(e => e.Class)
+            //     .ThenInclude(c => c.Course)
+            //     .Include(e => e.Student)
+            //     .FirstOrDefaultAsync(m => m.Id == id);
+
             var enrollment = await _context.Enrollments
-                .Include(e => e.Class)
-                .Include(e => e.Student)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                   .Include(e => e.Class)
+                       .ThenInclude(c => c.Course)
+                   .Include(e => e.Class)
+                       .ThenInclude(c => c.Lecturer) // Ensure Lecturer is loaded
+                   .Include(e => e.Student)
+                   .FirstOrDefaultAsync(m => m.Id == id);
             if (enrollment == null)
             {
                 return NotFound();
@@ -54,6 +65,7 @@ namespace SchoolManagementApp.Controllers
 
             return View(enrollment);
         }
+
 
         // GET: Enrollments/Create
         public IActionResult Create()
