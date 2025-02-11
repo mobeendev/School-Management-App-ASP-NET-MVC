@@ -12,7 +12,7 @@ using SchoolManagementApp.Services;
 namespace SchoolManagementApp.Controllers
 {
     [Authorize]
-    public class EnrollmentsController : Controller
+    public class EnrollmentsController : BaseController
     {
         private readonly SchoolManagementDbContext _context;
         private readonly DropdownService _dropdownService;
@@ -44,12 +44,6 @@ namespace SchoolManagementApp.Controllers
             {
                 return NotFound();
             }
-
-            // var enrollment = await _context.Enrollments
-            //     .Include(e => e.Class)
-            //     .ThenInclude(c => c.Course)
-            //     .Include(e => e.Student)
-            //     .FirstOrDefaultAsync(m => m.Id == id);
 
             var enrollment = await _context.Enrollments
                    .Include(e => e.Class)
@@ -87,6 +81,7 @@ namespace SchoolManagementApp.Controllers
             {
                 _context.Add(enrollment);
                 await _context.SaveChangesAsync();
+                SetSuccessMessage("Enrollment created successfully!"); // ✅ Centralized success message
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ClassId"] = _dropdownService.GetClasses();
@@ -97,16 +92,16 @@ namespace SchoolManagementApp.Controllers
         // GET: Enrollments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            // if (id == null || _context.Enrollments == null)
-            // {
-            //     return NotFound();
-            // }
+            if (id == null || _context.Enrollments == null)
+            {
+                return NotFound();
+            }
 
             var enrollment = await _context.Enrollments.FindAsync(id);
-            // if (enrollment == null)
-            // {
-            //     return NotFound();
-            // }
+            if (enrollment == null)
+            {
+                return NotFound();
+            }
             ViewData["ClassId"] = _dropdownService.GetClasses();
             ViewData["StudentId"] = _dropdownService.GetStudents();
 
@@ -143,6 +138,8 @@ namespace SchoolManagementApp.Controllers
                         throw;
                     }
                 }
+
+                SetSuccessMessage("Enrollment updated successfully!");
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ClassId"] = new SelectList(_context.Classes, "Id", "Id", enrollment.ClassId);
@@ -186,6 +183,7 @@ namespace SchoolManagementApp.Controllers
             }
 
             await _context.SaveChangesAsync();
+            SetSuccessMessage("Enrollment deleted successfully!");
             return RedirectToAction(nameof(Index));
         }
 

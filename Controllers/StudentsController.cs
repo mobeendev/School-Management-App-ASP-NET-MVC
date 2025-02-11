@@ -10,7 +10,7 @@ using SchoolManagementApp.Data;
 namespace SchoolManagementApp.Controllers
 {
 
-    public class StudentsController : Controller
+    public class StudentsController : BaseController
     {
         private readonly SchoolManagementDbContext _context;
 
@@ -62,9 +62,12 @@ namespace SchoolManagementApp.Controllers
             {
                 _context.Add(student);
                 await _context.SaveChangesAsync();
+
+                SetSuccessMessage("Student added successfully!");
                 return RedirectToAction(nameof(Index));
             }
-            return View(student);
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Students/Edit/5
@@ -112,6 +115,8 @@ namespace SchoolManagementApp.Controllers
                         throw;
                     }
                 }
+
+                SetSuccessMessage("Student updated successfully!");
                 return RedirectToAction(nameof(Index));
             }
 
@@ -152,6 +157,8 @@ namespace SchoolManagementApp.Controllers
             }
 
             await _context.SaveChangesAsync();
+
+            SetSuccessMessage("Student deleted successfully!");
             return RedirectToAction(nameof(Index));
         }
 

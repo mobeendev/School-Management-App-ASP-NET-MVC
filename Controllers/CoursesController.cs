@@ -9,7 +9,7 @@ using SchoolManagementApp.Data;
 
 namespace SchoolManagementApp.Controllers
 {
-    public class CoursesController : Controller
+    public class CoursesController : BaseController
     {
         private readonly SchoolManagementDbContext _context;
 
@@ -21,13 +21,6 @@ namespace SchoolManagementApp.Controllers
 
         public async Task<IActionResult> Index()
         {
-            /* 
-              If (databaseTableExists) {
-                  var recordsInTable = await _context.Courses.ToListAsync();
-                  return View(recordsInTable);
-              }
-              return Problem("Entity set 'SchoolManagementDbContext.Courses'  is null.");
-            */
             return _context.Courses != null ?
                         View(await _context.Courses.ToListAsync()) :
                         Problem("Entity set 'SchoolManagementDbContext.Courses'  is null.");
@@ -69,6 +62,8 @@ namespace SchoolManagementApp.Controllers
             {
                 _context.Add(course);
                 await _context.SaveChangesAsync();
+
+                SetSuccessMessage("Course created successfully!"); // ✅ Centralized success message
                 return RedirectToAction(nameof(Index));
             }
             return View(course);
@@ -87,6 +82,7 @@ namespace SchoolManagementApp.Controllers
             {
                 return NotFound();
             }
+
             return View(course);
         }
 
@@ -120,6 +116,9 @@ namespace SchoolManagementApp.Controllers
                         throw;
                     }
                 }
+
+                SetSuccessMessage("Course updated successfully!"); // ✅ Centralized success message
+
                 return RedirectToAction(nameof(Index));
             }
             return View(course);
@@ -160,6 +159,7 @@ namespace SchoolManagementApp.Controllers
             }
 
             await _context.SaveChangesAsync();
+            SetSuccessMessage("Course deleted successfully!"); // ✅ Centralized success message
             return RedirectToAction(nameof(Index));
         }
 

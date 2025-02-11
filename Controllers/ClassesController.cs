@@ -10,7 +10,7 @@ using SchoolManagementApp.Services;
 
 namespace SchoolManagementApp.Controllers
 {
-    public class ClassesController : Controller
+    public class ClassesController : BaseController
     {
         private readonly SchoolManagementDbContext _context;
         private readonly DropdownService _dropdownService;
@@ -74,12 +74,12 @@ namespace SchoolManagementApp.Controllers
             {
                 _context.Add(@class);
                 await _context.SaveChangesAsync();
+
+                SetSuccessMessage("Class created successfully!"); // ✅ Centralized success message
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CourseId"] = _dropdownService.GetCourses();
-            ViewData["LecturerId"] = _dropdownService.GetLecturers();
 
-            return View(@class);
+            return RedirectToAction(nameof(Index));
         }
 
 
@@ -131,6 +131,8 @@ namespace SchoolManagementApp.Controllers
                         throw;
                     }
                 }
+
+                SetSuccessMessage("Class updated successfully!"); // ✅ Centralized success message
                 return RedirectToAction(nameof(Index));
             }
 
@@ -165,18 +167,27 @@ namespace SchoolManagementApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Classes == null)
+            try
             {
-                return Problem("Entity set 'SchoolManagementDbContext.Classes' is null.");
-            }
-            var @class = await _context.Classes.FindAsync(id);
-            if (@class != null)
-            {
-                _context.Classes.Remove(@class);
-            }
+                if (_context.Classes == null)
+                {
+                    return Problem("Entity set 'SchoolManagementDbContext.Classes' is null.");
+                }
+                var @class = await _context.Classes.FindAsync(id);
+                if (@class != null)
+                {
+                    _context.Classes.Remove(@class);
+                }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+                await _context.SaveChangesAsync();
+                SetSuccessMessage("Class deleted successfully!"); // ✅ Centralized success message
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                TempData["ErrorMessage"] = "Error: Unable to delete the class because it has associated enrollments.";
+                return RedirectToAction("Index");
+            }
         }
 
         private bool ClassExists(int id)

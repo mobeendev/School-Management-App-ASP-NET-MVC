@@ -9,7 +9,7 @@ using SchoolManagementApp.Data;
 
 namespace SchoolManagementApp.Controllers
 {
-    public class LecturersController : Controller
+    public class LecturersController : BaseController
     {
         private readonly SchoolManagementDbContext _context;
 
@@ -61,6 +61,8 @@ namespace SchoolManagementApp.Controllers
             {
                 _context.Add(lecturer);
                 await _context.SaveChangesAsync();
+
+                SetSuccessMessage("Lecturer created successfully!"); // ✅ Centralized success message
                 return RedirectToAction(nameof(Index));
             }
             return View(lecturer);
@@ -112,6 +114,7 @@ namespace SchoolManagementApp.Controllers
                         throw;
                     }
                 }
+                SetSuccessMessage("Lecturer updated successfully!");
                 return RedirectToAction(nameof(Index));
             }
             return View(lecturer);
@@ -151,6 +154,8 @@ namespace SchoolManagementApp.Controllers
             }
 
             await _context.SaveChangesAsync();
+
+            SetSuccessMessage("Lecturer deleted successfully!");
             return RedirectToAction(nameof(Index));
         }
 
