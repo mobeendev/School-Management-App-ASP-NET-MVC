@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using SchoolManagementApp.Data;
 using SchoolManagementApp.Services;
 
 namespace SchoolManagementApp.Controllers
 {
+    [Authorize]
     public class ClassesController : BaseController
     {
         private readonly SchoolManagementDbContext _context;
@@ -61,6 +63,8 @@ namespace SchoolManagementApp.Controllers
 
             ViewData["CourseId"] = _dropdownService.GetCourses();
             ViewData["LecturerId"] = _dropdownService.GetLecturers();
+            ViewData["SemesterId"] = _dropdownService.GetSemesters();
+
 
             return View();
         }
@@ -68,18 +72,19 @@ namespace SchoolManagementApp.Controllers
         // POST: Classes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,LecturerId,CourseId,Time")] Class @class)
+        public async Task<IActionResult> Create(Class @class)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(@class);
-                await _context.SaveChangesAsync();
+            // if (ModelState.IsValid)
+            // {
+            _context.Add(@class);
+            await _context.SaveChangesAsync();
 
-                SetSuccessMessage("Class created successfully!"); // ✅ Centralized success message
-                return RedirectToAction(nameof(Index));
-            }
-
+            SetSuccessMessage("Class created successfully!"); // ✅ Centralized success message
             return RedirectToAction(nameof(Index));
+            // }
+
+            // SetErrorMessage("Error! Creating class!"); // ✅ Centralized error message
+            // return View(@class); // Return the view with the current model to show validation errors
         }
 
 

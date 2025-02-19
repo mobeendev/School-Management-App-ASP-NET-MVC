@@ -66,6 +66,9 @@ namespace SchoolManagementApp.Controllers
         {
             ViewData["ClassId"] = _dropdownService.GetClasses();
             ViewData["StudentId"] = _dropdownService.GetStudents();
+            ViewData["SemesterId"] = _dropdownService.GetSemesters();
+            ViewBag.SemesterId = _dropdownService.GetSemesters();
+
 
             return View();
         }
@@ -75,7 +78,7 @@ namespace SchoolManagementApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,StudentId,ClassId,Grade")] Enrollment enrollment)
+        public async Task<IActionResult> Create(Enrollment enrollment)
         {
             if (ModelState.IsValid)
             {
@@ -84,8 +87,49 @@ namespace SchoolManagementApp.Controllers
                 SetSuccessMessage("Enrollment created successfully!"); // ✅ Centralized success message
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClassId"] = _dropdownService.GetClasses();
-            ViewData["StudentId"] = _dropdownService.GetStudents();
+
+
+            if (!ModelState.IsValid)
+            {
+                // Log ModelState errors
+
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Where(ms => ms.Value.Errors.Any())
+                                           .ToDictionary(k => k.Key, v => v.Value.Errors.Select(e => e.ErrorMessage).ToList());
+
+                    ViewBag.Errors = errors;
+
+                    Console.WriteLine("::::::::::::::::::" + errors); // ✅ Check console logs
+
+                    foreach (var state in ModelState)
+                    {
+                        foreach (var error in state.Value.Errors)
+                        {
+                            Console.WriteLine($"Field: {state.Key}, :::::::::::::::::::::::::::::::::::::::::::::  Error: {error.ErrorMessage}");
+                        }
+                    }
+
+                    // SetSuccessMessage("Error!" + errors["0"]); // ✅ Centralized success message
+
+                    ViewData["ClassId"] = _dropdownService.GetClasses();
+                    ViewData["StudentId"] = _dropdownService.GetStudents();
+                    ViewData["SemesterId"] = _dropdownService.GetSemesters();
+
+                    return View(enrollment);
+                }
+
+                SetErrorMessage("Error creating enrollment! Please check your inputs.");
+
+                // Reload dropdown lists before returning the view
+                ViewData["ClassId"] = _dropdownService.GetClasses();
+                ViewData["StudentId"] = _dropdownService.GetStudents();
+                ViewBag.SemesterId = _dropdownService.GetSemesters();
+
+
+                return View(enrollment);
+            }
+
             return View(enrollment);
         }
 

@@ -60,6 +60,21 @@ namespace SchoolManagementApp.Services
                                     "Id", "CourseName");
         }
 
+
+        public SelectList GetSemesters()
+        {
+            return new SelectList(
+                _context.Semesters.Select(l => new
+                {
+                    Id = l.Id,
+                    DisplayValue = l.Type + " (" + l.StartDate.ToString("yyyy-MM-dd") + " - " + l.EndDate.ToString("yyyy-MM-dd") + ")"
+                }),
+                "Id",
+                "DisplayValue" // 👈 Fix here: Use "DisplayValue" instead of "Type"
+            );
+        }
+
+
     }
 }
 

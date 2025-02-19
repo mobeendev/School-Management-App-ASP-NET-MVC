@@ -38,12 +38,6 @@
             @(Model.Class != null && Model.Class.Lecturer != null ? Model.Class.Lecturer.FirstName  + " " + Model.Class.Lecturer.LastName : "No Lecturer Assigned")
         </dd>
 
-        <!-- Class Time -->
-        <dt class="col-sm-3">Class Time:</dt>
-        <dd class="col-sm-9">
-            @(Model.Class != null && Model.Class.Time.HasValue ? Model.Class.Time.ToString() : "Not Scheduled")
-        </dd>
-
         <!-- Grade -->
         <dt class="col-sm-3">Grade:</dt>
         <dd class="col-sm-9">

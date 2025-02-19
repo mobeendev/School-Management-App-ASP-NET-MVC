@@ -1,10 +1,10 @@
-@model IEnumerable<SchoolManagementApp.Data.Class>
+@model IEnumerable<SchoolManagementApp.Data.Semester>
 
 @{
-    ViewData["Title"] = "Classes Listing";
+    ViewData["Title"] = "Semester Listing";
 }
 
-<h1>Classes</h1>
+<h1>Semester</h1>
 
 <p>
     <a asp-action="Create" class="btn btn-success">Create New</a>
@@ -12,29 +12,32 @@
 <table class="table">
     <thead>
         <tr>
-                        <th>
-                @Html.DisplayNameFor(model => model.Course.Name)
+            <th>
+                @Html.DisplayNameFor(model => model.Type)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Lecturer)
+                @Html.DisplayNameFor(model => model.StartDate)
             </th>
-              <th>
-               Action
+            <th>
+                @Html.DisplayNameFor(model => model.EndDate)
             </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                 <td>
-                    @(item.Lecturer != null ? item.Course.Name : "No Course Assigned")
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type)
                 </td>
-
-                 <td>
-                    @(item.Lecturer != null ? item.Lecturer.FirstName + " " + item.Lecturer.LastName : "No Lecturer Assigned")
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
                 </td>
-                 <td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndDate)
+                </td>
+                <td>
                     <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
                     <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id">Details</a>
                     <button data-id="@item.Id" class="btn btn-danger deleteBtn" type="button">Delete</button>
@@ -44,8 +47,8 @@
     </tbody>
 </table>
 
-<form asp-action="Delete" id="classDeleteForm">
-    <input type="hidden" id="classid" name="id" />
+<form asp-action="Delete" id="courseDeleteForm">
+    <input type="hidden" id="courseid" name="id" />
 </form>
 
 @section Scripts {
@@ -71,8 +74,8 @@
                         );
                         var btn = $(this);
                         var id = btn.data("id");
-                        $('#classid').val(id);
-                        $('#classDeleteForm').submit();
+                        $('#courseid').val(id);
+                        $('#courseDeleteForm').submit();
                     }
                 })
             })

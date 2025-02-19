@@ -13,12 +13,18 @@ namespace SchoolManagementApp.Data
 
         public int? CourseId { get; set; }
 
-        public TimeSpan? Time { get; set; }
+        public int SemesterId { get; set; }
 
         public virtual Course? Course { get; set; }
 
+        public virtual Lecturer? Lecturer { get; set; }
+
+        public virtual Semester Semester { get; set; } = null!;
+
         public virtual ICollection<Enrollment> Enrollments { get; } = new List<Enrollment>();
 
-        public virtual Lecturer? Lecturer { get; set; }
+        public virtual ICollection<ClassSchedule> ClassSchedules { get; } = new List<ClassSchedule>();
     }
+
+
 }
