@@ -1,0 +1,131 @@
+
+
+@{
+    ViewData["Title"] = "Mark Attendance";
+}
+
+<h2 class="mb-4">Mark Attendance</h2>
+
+<div class="row mb-3">
+    <div class="col-md-4">
+        <label for="course" class="form-label">Select Course:</label>
+        <select id="course" class="form-select" asp-items="ViewBag.Courses">
+            <option value="">-- Select Course --</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="semester" class="form-label">Select Semester:</label>
+        <select id="semester" class="form-select" asp-items="ViewBag.Semesters">
+            <option value="">-- Select Semester --</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="class" class="form-label">Select Class:</label>
+        <select id="class" class="form-select">
+            <option value="">-- Select Class --</option>
+        </select>
+    </div>
+</div>
+
+<div id="loader" class="text-center" style="display: none;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">Students List</div>
+    <div class="card-body">
+        
+          <table class="table table-hover table-bordered align-middle">
+            <thead class="table-secondary text-center">
+                <tr>
+                    <th>Name</th>
+                    <th>Class</th>
+                    <th>Semester</th>
+                    <th>Present</th>
+                </tr>
+            </thead>
+            <tbody id="studentsList"></tbody>
+        </table>
+    </div>
+</div>
+
+
+
+<div id="errorMsg" class="text-center" style="display: none; color:red;">
+    No results found for the selected filters.
+</div>
+
+
+
+@section Scripts {
+                            <script>
+                            $(document).ready(function () {
+                                
+                                var studentsList = $('#studentsList');
+                                $('#errorMsg').hide();
+
+                                $('#course, #semester').change(function () {
+                                    var courseId = $('#course').val();
+                                    var semesterId = $('#semester').val();
+                                      studentsList.empty();
+                                       $('#errorMsg').hide();                              
+                                    if (courseId && semesterId) {
+                                        $.getJSON('/Attendance/GetClasses', { courseId: courseId, semesterId: semesterId }, function (data) {
+                                            var classDropdown = $('#class');
+                                            classDropdown.empty().append('<option value="">-- Select Class --</option>');
+                                                if (data.success != false) {
+                                                $.each(data, function (i, item) {
+                                                    classDropdown.append($('<option>', { value: item.id, text: item.name }));
+                                                });
+                                            } else {
+                                                    $('#errorMsg').show();
+                                                console.log(data.message);
+                                            }
+                                        });
+                                    }
+                                });
+
+                                $('#class').change(function () {
+                                    var classId = $(this).val();
+                                    if (classId) {
+                                        $('#loader').show();
+                                         $('#errorMsg').hide();
+                                        setTimeout(function () {
+                                            $.getJSON('/Attendance/GetStudents', { classId: classId }, function (data) {
+                                                studentsList.empty();
+                                                $('#loader').hide();
+                                                if (data.success != false) {
+                                                    $.each(data, function (i, item) {
+                                                        studentsList.append('<tr>' +
+                                                            '<td>' + item.fullName + '</td>' +
+                                                            '<td>Class ' + item.className + '</td>' +
+                                                            '<td>' + item.semesterType + '</td>' +
+                                                            '<td class="text-center"><input type="checkbox" class="form-check-input attendanceCheckbox" data-student-id="' + item.id + '"></td>' +
+                                                            '</tr>');
+                                                    });
+                                                } else {
+                                                    $('#errorMsg').show();
+                                                        console.log(data.message);
+                                                }
+                                            });
+                                        }, 1000);
+                                    }
+                                });
+
+                                $(document).on('change', '.attendanceCheckbox', function () {
+                                    var studentId = $(this).data('student-id');
+                                    var classId = $('#class').val();
+                                    var semesterId = $('#semester').val();
+                                    var isPresent = $(this).is(':checked');
+
+                                    $.post('/Attendance/MarkAttendance', { studentId: studentId, classId: classId, semesterId: semesterId, isPresent: isPresent }, function (response) {
+                                        if (response.success) {
+                                            console.log('Attendance marked successfully');
+                                        }
+                                    });
+                                });
+                            });
+                            </script>
+}

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
 
 namespace SchoolManagementApp.Data
 {
@@ -21,6 +23,7 @@ namespace SchoolManagementApp.Data
 
         public virtual Student? Student { get; set; }
 
+        [ValidateNever]
         public virtual Semester Semester { get; set; } = null!;
     }
 }

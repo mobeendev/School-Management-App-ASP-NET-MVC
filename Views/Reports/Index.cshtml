@@ -1,0 +1,200 @@
+@model IEnumerable<SchoolManagementApp.Models.AttendanceViewModel>
+@{
+    ViewData["Title"] = "Attendance Report";
+}
+
+<h2>Attendance Report</h2>
+<form asp-action="Index" method="GET" class="p-3 bg-light shadow-sm rounded">
+    <div class="row g-3 align-items-end">
+        <!-- Semester Dropdown -->
+        <div class="col-md-3">
+            <label class="fw-bold">Semester</label>
+            <select id="semesterId" name="semesterId" class="form-select">
+                <option value="">-- Select Semester --</option>
+                @foreach (var item in ViewBag.Semesters)
+                {
+                    <option value="@item.Id" selected="@(item.Id == ViewBag.SelectedSemester ? "selected" : null)">
+                        @item.ToString()
+                    </option>
+                }
+            </select>
+        </div>
+
+        <!-- Course Dropdown -->
+        <div class="col-md-3">
+            <label class="fw-bold">Course</label>
+            <select id="courseId" name="courseId" class="form-select" disabled>
+                <option value="">-- Select Course --</option>
+            </select>
+        </div>
+
+        <!-- Class Dropdown -->
+        <div class="col-md-3">
+            <label class="fw-bold">Class</label>
+            <select id="classId" name="classId" class="form-select" disabled>
+                <option value="">-- Select Class --</option>
+            </select>
+        </div>
+
+        <!-- Lecturer Dropdown -->
+        <div class="col-md-3">
+            <label class="fw-bold">Lecturer</label>
+            <select id="lecturerId" name="lecturerId" class="form-select" disabled>
+                <option value="">-- Select Lecturer --</option>
+            </select>
+        </div>
+    </div>
+
+    <input type="hidden" id="selectedCourseId" value="@ViewBag.selectedCourseId" />
+    <input type="hidden" id="selectedClassId" value="@ViewBag.selectedClassId" />
+
+    <!-- Buttons: Aligned Right -->
+    <div class="mt-3 d-flex justify-content-end">
+        <input type="submit" value="Filter" class="btn btn-primary me-2 px-4" />
+        <button type="button" id="resetBtn" class="btn btn-outline-secondary px-4">Reset</button>
+    </div>
+</form>
+
+@if (Model != null && Model.Any())
+{
+    <div class="table-responsive">
+
+        <table class="table table-hover table-bordered align-middle">
+            <thead class="table-secondary text-center">
+                <tr>
+                    <th>Student</th>
+                    <th>Course</th>
+                    <th>Code</th>
+                    <th>Class</th>
+                    <th>Semester</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.StudentName</td>
+                        <td>@item.CourseName</td>
+                        <td>@item.CourseCode</td>
+                        <td>@item.ClassName</td>
+                        <td>@item.Semester</td>
+                        <td>@item.Date.ToString("d")</td>
+                        <td>@(item.IsPresent ? "Present" : "Absent")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning text-center" role="alert">
+        <i class="bi bi-exclamation-triangle"></i> No students found for the selected filters.
+    </div>
+}
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var selectedCourseId = $('#selectedCourseId').val(); // Get preselected courseId from hidden field
+            var selectedClassId = $('#selectedClassId').val(); // Get preselected selectedClassId from hidden field
+            // Semester -> Courses
+            $('#semesterId').change(function () {
+                var semesterId = $(this).val();
+                $('#courseId').prop('disabled', !semesterId);
+                if (semesterId) {
+                    $.getJSON('/Reports/GetCoursesBySemester', { semesterId: semesterId }, function (data) {
+                        $('#courseId').empty().append('<option value="">-- Select Courses --</option>');
+                        $.each(data, function (i, item) {
+                            $('#courseId').append($('<option>', {
+                                value: item.id,
+                                text: item.name
+                            }));
+                        });
+
+                        if (selectedCourseId) {
+                            console.log("fetching classes for selected courseId ID ..." + selectedCourseId);
+                            $('#courseId').val(selectedCourseId).change();
+                            @* $('#courseId').change(); *@
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+                    });
+
+                }
+            });
+
+            // Courses -> Classes
+            $('#courseId').change(function () {
+                console.log("change triggered for courseId ..." + selectedCourseId);
+                var courseId = $(this).val();
+                let semesterId = $('#semesterId').val();;
+
+
+                if (courseId && semesterId) {
+                    $('#classId').prop('disabled', false);
+                    $.getJSON('/Reports/GetClassesByCourseAndSemester', { courseId, semesterId }, function (data) {
+                        $('#classId').empty().append('<option value="">-- Select Class --</option>');
+                        $.each(data, function (i, item) {
+                            $('#classId').append($('<option>', {
+                                value: item.id,
+                                text: item.name
+                            }));
+
+                            // Wait a short time before setting the selected value
+                            setTimeout(function () {
+                                if (selectedClassId) {
+                                    $('#classId').prop('disabled', false);
+                                    $('#classId').val(selectedClassId).change();
+                                }
+                            }, 10);
+
+                        });
+                    });
+                }
+            });
+
+            // Classes -> Lecturer
+            $('#courseId').change(function () {
+                $('#classId').prop('disabled');
+                var courseId = $(this).val();
+                let semesterId = $('#semesterId').val();;
+
+                $('#classId').prop('disabled', !courseId);
+
+                if (courseId && semesterId) {
+
+                    $.getJSON('/Reports/GetClassesByCourseAndSemester', { courseId, semesterId }, function (data) {
+                        $('#classId').empty().append('<option value="">-- Select Class --</option>');
+                        console.log(data);
+
+                        if (data.success != false) {
+                            $.each(data, function (i, item) {
+                                $('#classId').append($('<option>', {
+                                    value: item.id,
+                                    text: item.name
+                                }));
+                            });
+                        } else {
+                            console.log(data.message);
+                        }
+
+                    });
+                }
+            });
+
+            $('#resetBtn').click(function () {
+                $('#semesterId').val('');  // Reset Semester
+                $('#courseId').val('').prop('disabled', true);  // Reset and disable Course
+                $('#classId').val('').prop('disabled', true);  // Reset and disable Class
+                $('#lecturerId').val('').prop('disabled', true);  // Reset and disable Lecturer
+                $('form').submit(); // Submit the form with default values
+            });
+
+            if ($('#semesterId').val()) {
+                $('#semesterId').change();
+            }
+        });
+    </script>
+}
