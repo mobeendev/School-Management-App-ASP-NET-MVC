@@ -1,0 +1,125 @@
+@model List<SchoolManagementApp.Models.AttendanceViewModel>
+
+@{
+    ViewData["Title"] = "Mark Attendance";
+}
+
+<h2>View Attendance</h2>
+
+<div class="row mb-3">
+    <div class="col-md-3">
+        <label>Semester:</label>
+        <select id="semesterId" class="form-control">
+            <option value="">-- Select Semester --</option>
+            @foreach (var item in ViewBag.Semesters)
+            {
+                <option value="@item.Id">@item.ToString()</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label>Class:</label>
+        <select id="classId" class="form-control" disabled>
+            <option value="">-- Select Class --</option>
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label>Course:</label>
+        <select id="courseId" class="form-control" disabled>
+            <option value="">-- Select Course --</option>
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label>Lecturer:</label>
+        <select id="lecturerId" class="form-control" disabled>
+            <option value="">-- Select Lecturer --</option>
+        </select>
+    </div>
+</div>
+
+<div id="studentsContainer">
+    <!-- Students will be loaded here -->
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Semester -> Class
+            $('#semesterId').change(function () {
+                var semesterId = $(this).val();
+                $('#classId').prop('disabled', !semesterId);
+
+                if (semesterId) {
+                    $.getJSON('/Attendance/GetClassesBySemester', { semesterId: semesterId }, function (data) {
+                        $('#classId').empty().append('<option value="">-- Select Class --</option>');
+                        $.each(data, function (i, item) {
+                            $('#classId').append($('<option>', {
+                                value: item.id,
+                                text: item.name
+                            }));
+                        });
+                    });
+                }
+            });
+
+            // Class -> Course
+            $('#classId').change(function () {
+                var classId = $(this).val();
+                $('#courseId').prop('disabled', !classId);
+
+                if (classId) {
+                    $.getJSON('/Attendance/GetCourseByClass', { classId: classId }, function (course) {
+                        $('#courseId').empty()
+                            .append($('<option>', {
+                                value: course.id,
+                                text: course.name
+                            }));
+                    });
+                }
+            });
+
+            // Course -> Lecturer (requires semesterId)
+            $('#courseId').change(function () {
+                var courseId = $(this).val();
+                var semesterId = $('#semesterId').val();
+                $('#lecturerId').prop('disabled', !courseId);
+
+                if (courseId && semesterId) {
+                    $.getJSON('/Attendance/GetLecturersByCourse',
+                        { courseId: courseId, semesterId: semesterId },
+                        function (data) {
+                            $('#lecturerId').empty().append('<option value="">-- Select Lecturer --</option>');
+                            $.each(data, function (i, item) {
+                                $('#lecturerId').append($('<option>', {
+                                    value: item.id,
+                                    text: item.name
+                                }));
+                            });
+                        });
+                }
+            });
+
+            // Lecturer -> Students
+            $('#lecturerId').change(function () {
+                var lecturerId = $(this).val();
+                var courseId = $('#courseId').val();
+                var semesterId = $('#semesterId').val();
+
+                if (lecturerId && courseId && semesterId) {
+                    $.get('/Attendance/Index',
+                        {
+                            lecturerId: lecturerId,
+                            courseId: courseId,
+                            semesterId: semesterId
+                        },
+                        function (data) {
+                            $('#studentsContainer').html(data);
+                        });
+                }
+            });
+        });
+    </script>
+}

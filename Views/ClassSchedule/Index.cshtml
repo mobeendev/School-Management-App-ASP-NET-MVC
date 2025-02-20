@@ -1,0 +1,97 @@
+@model IEnumerable<SchoolManagementApp.Data.ClassSchedule>
+
+@{
+    ViewData["Title"] = "Class Schedule Listing";
+}
+
+<h1>Class Schedule</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-success">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+                        <th>
+              Class 
+            </th>
+            <th>
+             Lecturer
+            </th>
+
+              <th>
+             Day
+            </th>
+
+              <th>
+             Time
+            </th>
+              <th>
+               Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                 <td>
+                    @(item.Class  != null && item.Class.Course != null ? item.Class.Course.Name : "No Course Assigned")
+                </td>
+
+                 <td>
+                    @(item.Lecturer != null ? item.Lecturer.FirstName + " " + item.Lecturer.LastName : "No Lecturer Assigned")
+                </td>
+
+                 <td>
+                    @(item.Day)
+                </td>
+
+                 <td>
+                    @(item.StartTime)
+                </td>
+                 <td>
+                    <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    <button data-id="@item.Id" class="btn btn-danger deleteBtn" type="button">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<form asp-action="Delete" id="classDeleteForm">
+    <input type="hidden" id="classid" name="id" />
+</form>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('.table').DataTable();
+
+            $('.deleteBtn').click(function (e) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        );
+                        var btn = $(this);
+                        var id = btn.data("id");
+                        $('#classid').val(id);
+                        $('#classDeleteForm').submit();
+                    }
+                })
+            })
+        })
+    </script>
+}

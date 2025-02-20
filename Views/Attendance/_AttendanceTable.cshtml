@@ -1,0 +1,28 @@
+@model List<SchoolManagementApp.Models.AttendanceViewModel>
+
+<form method="post" asp-action="MarkAttendance">
+    <table class="table mt-3">
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Present</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                    <tr>
+                        <td>@Model[i].StudentName</td>
+                        <td>
+                            <input type="hidden" asp-for="@Model[i].StudentId" />
+                            <input type="hidden" asp-for="@Model[i].ClassId" />
+                            <input type="hidden" asp-for="@Model[i].SemesterId" />
+                            <input type="hidden" asp-for="@Model[i].Date" />
+                            <input type="checkbox" asp-for="@Model[i].IsPresent" />
+                        </td>
+                    </tr>
+            }
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-success">Save Attendance</button>
+</form>
