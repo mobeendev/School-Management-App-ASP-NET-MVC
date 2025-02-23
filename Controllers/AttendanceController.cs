@@ -27,7 +27,7 @@ namespace SchoolManagementApp.Controllers
                     DisplayValue = l.Type + " (" + l.StartDate.ToString("yyyy-MM-dd") + " - " + l.EndDate.ToString("yyyy-MM-dd") + ")"
                 }),
                 "Id",
-                "DisplayValue" // 👈 Fix here: Use "DisplayValue" instead of "Type"
+                "DisplayValue"
             );
 
             return View();
@@ -64,7 +64,16 @@ namespace SchoolManagementApp.Controllers
         {
             var students = await _context.Enrollments
                 .Where(e => e.ClassId == classId)
-                .Select(e => new { e.Student.Id, FullName = e.Student.FirstName + " " + e.Student.LastName, ClassName = e.Class.Id, SemesterType = e.Semester.Type })
+               .Include(e => e.Class)
+                    .ThenInclude(e => e.Course)
+
+                .Select(e => new
+                {
+                    e.Student.Id,
+                    FullName = e.Student.FirstName + " " + e.Student.LastName,
+                    SemesterType = e.Semester.Type,
+                    ClassName = $"{e.Class.Course.Code} by {e.Class.Lecturer.FirstName} {e.Class.Lecturer.LastName}  "
+                })
                 .ToListAsync();
 
             if (students == null || students.Count == 0)
@@ -80,14 +89,6 @@ namespace SchoolManagementApp.Controllers
             return Json(students);
         }
 
-        //   public async Task<JsonResult> GetStudents(int classId)
-        // {
-        //     var students = await _context.Enrollments
-        //         .Select(e => new { e.Student.Id, FullName = e.Student.FirstName + " " + e.Student.LastName })
-        //         .ToListAsync();
-        //     return Json(students);
-        // }
-
         [HttpPost]
         public async Task<IActionResult> MarkAttendance(int studentId, int classId, int semesterId, bool isPresent)
         {
@@ -97,8 +98,6 @@ namespace SchoolManagementApp.Controllers
                                        && a.ClassId == classId
                                        && a.SemesterId == semesterId
                                        && a.Date == date);
-
-
 
             if (attendance != null)
             {

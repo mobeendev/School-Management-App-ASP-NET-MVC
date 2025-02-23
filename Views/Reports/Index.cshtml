@@ -14,7 +14,7 @@
                 @foreach (var item in ViewBag.Semesters)
                 {
                     <option value="@item.Id" selected="@(item.Id == ViewBag.SelectedSemester ? "selected" : null)">
-                        @item.ToString()
+                        @item.DisplayValue
                     </option>
                 }
             </select>
@@ -65,7 +65,7 @@
                     <th>Student</th>
                     <th>Course</th>
                     <th>Code</th>
-                    <th>Class</th>
+                    @* <th>Class</th> *@
                     <th>Semester</th>
                     <th>Date</th>
                     <th>Status</th>
@@ -78,7 +78,7 @@
                         <td>@item.StudentName</td>
                         <td>@item.CourseName</td>
                         <td>@item.CourseCode</td>
-                        <td>@item.ClassName</td>
+                        @* <td>@item.ClassName</td> *@
                         <td>@item.Semester</td>
                         <td>@item.Date.ToString("d")</td>
                         <td>@(item.IsPresent ? "Present" : "Absent")</td>
@@ -119,7 +119,7 @@ else
                             console.log("fetching classes for selected courseId ID ..." + selectedCourseId);
                             $('#courseId').val(selectedCourseId).change();
                             @* $('#courseId').change(); *@
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
                     });
 
                 }

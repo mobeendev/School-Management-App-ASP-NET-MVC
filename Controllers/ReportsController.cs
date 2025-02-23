@@ -20,7 +20,12 @@ namespace SchoolManagementApp.Controllers
         public async Task<IActionResult> Index(int? semesterId, int? classId, int? courseId)
         {
             // Load dropdown data (unchanged)
-            ViewBag.Semesters = await _context.Semesters.ToListAsync();
+            ViewBag.Semesters = _context.Semesters.Select(l => new
+            {
+                Id = l.Id,
+                DisplayValue = l.Type + " (" + l.StartDate.ToString("yyyy-MM-dd") + " - " + l.EndDate.ToString("yyyy-MM-dd") + ")"
+            });
+
             ViewBag.SelectedSemester = semesterId;
             ViewBag.SelectedCourseId = courseId;
             ViewBag.SelectedClassId = classId;
@@ -71,10 +76,18 @@ namespace SchoolManagementApp.Controllers
         [HttpGet]
         public async Task<IActionResult> GetClassesByCourseAndSemester(int courseId, int semesterId)
         {
+            // var classes = await _context.Classes
+            //     .Where(c => c.CourseId == courseId && c.SemesterId == semesterId)
+            //     .Select(c => new { c.Id, Name = $"Class {c.Id}" })
+            //     .ToListAsync();
+
             var classes = await _context.Classes
-                .Where(c => c.CourseId == courseId && c.SemesterId == semesterId)
-                .Select(c => new { c.Id, Name = $"Class {c.Id}" })
-                .ToListAsync();
+       .Where(c => c.CourseId == courseId && c.SemesterId == semesterId)
+        .Include(c => c.Lecturer)
+        .Include(c => c.Course)
+        .Select(c => new { c.Id, Name = $"Class {c.Course.Code} by {c.Lecturer.FirstName} {c.Lecturer.LastName}  " })
+       .ToListAsync();
+
 
             return Json(classes);
         }

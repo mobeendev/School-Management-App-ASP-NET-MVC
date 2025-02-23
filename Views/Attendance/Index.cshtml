@@ -60,72 +60,72 @@
 
 
 @section Scripts {
-                            <script>
-                            $(document).ready(function () {
+                                    <script>
+                                    $(document).ready(function () {
                                 
-                                var studentsList = $('#studentsList');
-                                $('#errorMsg').hide();
+                                        var studentsList = $('#studentsList');
+                                        $('#errorMsg').hide();
 
-                                $('#course, #semester').change(function () {
-                                    var courseId = $('#course').val();
-                                    var semesterId = $('#semester').val();
-                                      studentsList.empty();
-                                       $('#errorMsg').hide();                              
-                                    if (courseId && semesterId) {
-                                        $.getJSON('/Attendance/GetClasses', { courseId: courseId, semesterId: semesterId }, function (data) {
-                                            var classDropdown = $('#class');
-                                            classDropdown.empty().append('<option value="">-- Select Class --</option>');
-                                                if (data.success != false) {
-                                                $.each(data, function (i, item) {
-                                                    classDropdown.append($('<option>', { value: item.id, text: item.name }));
+                                        $('#course, #semester').change(function () {
+                                            var courseId = $('#course').val();
+                                            var semesterId = $('#semester').val();
+                                              studentsList.empty();
+                                               $('#errorMsg').hide();                              
+                                            if (courseId && semesterId) {
+                                                $.getJSON('/Attendance/GetClasses', { courseId: courseId, semesterId: semesterId }, function (data) {
+                                                    var classDropdown = $('#class');
+                                                    classDropdown.empty().append('<option value="">-- Select Class --</option>');
+                                                        if (data.success != false) {
+                                                        $.each(data, function (i, item) {
+                                                            classDropdown.append($('<option>', { value: item.id, text: item.name }));
+                                                        });
+                                                    } else {
+                                                            $('#errorMsg').show();
+                                                        console.log(data.message);
+                                                    }
                                                 });
-                                            } else {
-                                                    $('#errorMsg').show();
-                                                console.log(data.message);
                                             }
                                         });
-                                    }
-                                });
 
-                                $('#class').change(function () {
-                                    var classId = $(this).val();
-                                    if (classId) {
-                                        $('#loader').show();
-                                         $('#errorMsg').hide();
-                                        setTimeout(function () {
-                                            $.getJSON('/Attendance/GetStudents', { classId: classId }, function (data) {
-                                                studentsList.empty();
-                                                $('#loader').hide();
-                                                if (data.success != false) {
-                                                    $.each(data, function (i, item) {
-                                                        studentsList.append('<tr>' +
-                                                            '<td>' + item.fullName + '</td>' +
-                                                            '<td>Class ' + item.className + '</td>' +
-                                                            '<td>' + item.semesterType + '</td>' +
-                                                            '<td class="text-center"><input type="checkbox" class="form-check-input attendanceCheckbox" data-student-id="' + item.id + '"></td>' +
-                                                            '</tr>');
+                                        $('#class').change(function () {
+                                            var classId = $(this).val();
+                                            if (classId) {
+                                                $('#loader').show();
+                                                 $('#errorMsg').hide();
+                                                setTimeout(function () {
+                                                    $.getJSON('/Attendance/GetStudents', { classId: classId }, function (data) {
+                                                        studentsList.empty();
+                                                        $('#loader').hide();
+                                                        if (data.success != false) {
+                                                            $.each(data, function (i, item) {
+                                                                studentsList.append('<tr>' +
+                                                                    '<td>' + item.fullName + '</td>' +
+                                                                    '<td>Class ' + item.name + '</td>' +
+                                                                    '<td>' + item.className + '</td>' +
+                                                                    '<td class="text-center"><input type="checkbox" class="form-check-input attendanceCheckbox" data-student-id="' + item.id + '"></td>' +
+                                                                    '</tr>');
+                                                            });
+                                                        } else {
+                                                            $('#errorMsg').show();
+                                                                console.log(data.message);
+                                                        }
                                                     });
-                                                } else {
-                                                    $('#errorMsg').show();
-                                                        console.log(data.message);
+                                                }, 1000);
+                                            }
+                                        });
+
+                                        $(document).on('change', '.attendanceCheckbox', function () {
+                                            var studentId = $(this).data('student-id');
+                                            var classId = $('#class').val();
+                                            var semesterId = $('#semester').val();
+                                            var isPresent = $(this).is(':checked');
+
+                                            $.post('/Attendance/MarkAttendance', { studentId: studentId, classId: classId, semesterId: semesterId, isPresent: isPresent }, function (response) {
+                                                if (response.success) {
+                                                    console.log('Attendance marked successfully');
                                                 }
                                             });
-                                        }, 1000);
-                                    }
-                                });
-
-                                $(document).on('change', '.attendanceCheckbox', function () {
-                                    var studentId = $(this).data('student-id');
-                                    var classId = $('#class').val();
-                                    var semesterId = $('#semester').val();
-                                    var isPresent = $(this).is(':checked');
-
-                                    $.post('/Attendance/MarkAttendance', { studentId: studentId, classId: classId, semesterId: semesterId, isPresent: isPresent }, function (response) {
-                                        if (response.success) {
-                                            console.log('Attendance marked successfully');
-                                        }
+                                        });
                                     });
-                                });
-                            });
-                            </script>
+                                    </script>
 }
