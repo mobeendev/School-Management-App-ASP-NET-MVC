@@ -7,17 +7,23 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using SchoolManagementApp.Data;
+using Microsoft.AspNetCore.Identity;
+using SchoolManagementApp.Models;
 
 namespace SchoolManagementApp.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class LecturersController : BaseController
     {
         private readonly SchoolManagementDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public LecturersController(SchoolManagementDbContext context)
+        public LecturersController(SchoolManagementDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _context = context;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         // GET: Lecturers
@@ -49,6 +55,13 @@ namespace SchoolManagementApp.Controllers
         // GET: Lecturers/Create
         public IActionResult Create()
         {
+            ViewBag.Roles = _roleManager.Roles;
+            // Define the list of genders
+            ViewBag.Genders = new List<Gender>
+                                    {
+                                        new Gender { ID = 1, Name = "Male", Value = "Male" },
+                                        new Gender { ID = 2, Name = "Female", Value = "Female" }
+                                    };
             return View();
         }
 
@@ -56,19 +69,76 @@ namespace SchoolManagementApp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName")] Lecturer lecturer)
+        public async Task<IActionResult> Create(LecturerViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(lecturer);
-                await _context.SaveChangesAsync();
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Gender = model.Gender,
+                    Address = "",
+                    PhoneNumber = "000000",
+                };
 
-                SetSuccessMessage("Lecturer created successfully!"); // ✅ Centralized success message
-                return RedirectToAction(nameof(Index));
+                var result = await _userManager.CreateAsync(user, model.Password);
+                // var result = await _userManager.CreateAsync(newlecturerUser);
+                if (result.Succeeded)
+                {
+                    if (!string.IsNullOrEmpty(model.Role))
+                    {
+                        await _userManager.AddToRoleAsync(user, model.Role);
+
+                        var newLecturer = new Lecturer
+                        {
+                            UserId = user.Id, // Assign ApplicationUser's Id
+                            Salary = model.Salary,
+                            YearsOfExperience = model.YearsOfExperience,
+                            WorkPhoneNumber = model.WorkPhoneNumber,
+                            TeachingHoursPerWeek = 10,
+                            Designation = model.Designation
+
+                        };
+
+                        _context.Lecturers.Add(newLecturer);
+                        await _context.SaveChangesAsync(); // Save to DB
+                    }
+                    return RedirectToAction(nameof(Index));
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
             }
-            return View(lecturer);
+
+            ViewBag.Roles = _roleManager.Roles;
+            // Define the list of genders
+            ViewBag.Genders = new List<Gender>
+                                    {
+                                        new Gender { ID = 1, Name = "Male", Value = "Male" },
+                                        new Gender { ID = 2, Name = "Female", Value = "Female" }
+                                    };
+
+            return View(model);
         }
+        // [ValidateAntiForgeryToken]
+        // public async Task<IActionResult> Create([Bind("Id,FirstName,LastName")] Lecturer lecturer)
+        // {
+        //     if (ModelState.IsValid)
+        //     {
+        //         _context.Add(lecturer);
+        //         await _context.SaveChangesAsync();
+
+        //         SetSuccessMessage("Lecturer created successfully!"); // ✅ Centralized success message
+        //         return RedirectToAction(nameof(Index));
+        //     }
+
+        //     return View(lecturer);
+        // }
 
         // GET: Lecturers/Edit/5
         public async Task<IActionResult> Edit(int? id)

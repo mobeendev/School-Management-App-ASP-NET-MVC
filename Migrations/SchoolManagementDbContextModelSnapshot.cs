@@ -40,7 +40,7 @@ namespace SchoolManagementApp.Migrations
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -63,7 +63,7 @@ namespace SchoolManagementApp.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims", (string)null);
+                    b.ToTable("RoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -86,7 +86,7 @@ namespace SchoolManagementApp.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("UserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -108,7 +108,7 @@ namespace SchoolManagementApp.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", (string)null);
+                    b.ToTable("UserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -123,7 +123,7 @@ namespace SchoolManagementApp.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("UserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -142,7 +142,7 @@ namespace SchoolManagementApp.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", (string)null);
+                    b.ToTable("UserTokens", (string)null);
                 });
 
             modelBuilder.Entity("SchoolManagementApp.Data.ApplicationUser", b =>
@@ -227,7 +227,39 @@ namespace SchoolManagementApp.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("Users", (string)null);
+                });
+
+            modelBuilder.Entity("SchoolManagementApp.Data.Attendance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ClassId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsPresent")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SemesterId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassId");
+
+                    b.HasIndex("SemesterId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("Attendances");
                 });
 
             modelBuilder.Entity("SchoolManagementApp.Data.Class", b =>
@@ -242,8 +274,8 @@ namespace SchoolManagementApp.Migrations
                     b.Property<int?>("LecturerId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<TimeSpan?>("Time")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("SemesterId")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -251,7 +283,39 @@ namespace SchoolManagementApp.Migrations
 
                     b.HasIndex("LecturerId");
 
+                    b.HasIndex("SemesterId");
+
                     b.ToTable("Classes");
+                });
+
+            modelBuilder.Entity("SchoolManagementApp.Data.ClassSchedule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ClassId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Day")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("LecturerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassId");
+
+                    b.HasIndex("LecturerId");
+
+                    b.ToTable("ClassSchedules");
                 });
 
             modelBuilder.Entity("SchoolManagementApp.Data.Course", b =>
@@ -287,12 +351,17 @@ namespace SchoolManagementApp.Migrations
                     b.Property<string>("Grade")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("SemesterId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("StudentId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ClassId");
+
+                    b.HasIndex("SemesterId");
 
                     b.HasIndex("StudentId");
 
@@ -305,17 +374,59 @@ namespace SchoolManagementApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("FirstName")
+                    b.Property<string>("Designation")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("LastName")
+                    b.Property<int>("Qualification")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Salary")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("TeachingHoursPerWeek")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("WorkPhoneNumber")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("YearsOfExperience")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
                     b.ToTable("Lecturers");
+                });
+
+            modelBuilder.Entity("SchoolManagementApp.Data.Semester", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Semesters");
                 });
 
             modelBuilder.Entity("SchoolManagementApp.Data.Student", b =>
@@ -391,6 +502,33 @@ namespace SchoolManagementApp.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SchoolManagementApp.Data.Attendance", b =>
+                {
+                    b.HasOne("SchoolManagementApp.Data.Class", "Class")
+                        .WithMany()
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SchoolManagementApp.Data.Semester", "Semester")
+                        .WithMany()
+                        .HasForeignKey("SemesterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SchoolManagementApp.Data.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Class");
+
+                    b.Navigation("Semester");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("SchoolManagementApp.Data.Class", b =>
                 {
                     b.HasOne("SchoolManagementApp.Data.Course", "Course")
@@ -401,7 +539,34 @@ namespace SchoolManagementApp.Migrations
                         .WithMany("Classes")
                         .HasForeignKey("LecturerId");
 
+                    b.HasOne("SchoolManagementApp.Data.Semester", "Semester")
+                        .WithMany("Classes")
+                        .HasForeignKey("SemesterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Course");
+
+                    b.Navigation("Lecturer");
+
+                    b.Navigation("Semester");
+                });
+
+            modelBuilder.Entity("SchoolManagementApp.Data.ClassSchedule", b =>
+                {
+                    b.HasOne("SchoolManagementApp.Data.Class", "Class")
+                        .WithMany("ClassSchedules")
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SchoolManagementApp.Data.Lecturer", "Lecturer")
+                        .WithMany()
+                        .HasForeignKey("LecturerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Class");
 
                     b.Navigation("Lecturer");
                 });
@@ -412,17 +577,38 @@ namespace SchoolManagementApp.Migrations
                         .WithMany("Enrollments")
                         .HasForeignKey("ClassId");
 
+                    b.HasOne("SchoolManagementApp.Data.Semester", "Semester")
+                        .WithMany("Enrollments")
+                        .HasForeignKey("SemesterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("SchoolManagementApp.Data.Student", "Student")
                         .WithMany("Enrollments")
                         .HasForeignKey("StudentId");
 
                     b.Navigation("Class");
 
+                    b.Navigation("Semester");
+
                     b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("SchoolManagementApp.Data.Lecturer", b =>
+                {
+                    b.HasOne("SchoolManagementApp.Data.ApplicationUser", "User")
+                        .WithOne()
+                        .HasForeignKey("SchoolManagementApp.Data.Lecturer", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SchoolManagementApp.Data.Class", b =>
                 {
+                    b.Navigation("ClassSchedules");
+
                     b.Navigation("Enrollments");
                 });
 
@@ -434,6 +620,13 @@ namespace SchoolManagementApp.Migrations
             modelBuilder.Entity("SchoolManagementApp.Data.Lecturer", b =>
                 {
                     b.Navigation("Classes");
+                });
+
+            modelBuilder.Entity("SchoolManagementApp.Data.Semester", b =>
+                {
+                    b.Navigation("Classes");
+
+                    b.Navigation("Enrollments");
                 });
 
             modelBuilder.Entity("SchoolManagementApp.Data.Student", b =>

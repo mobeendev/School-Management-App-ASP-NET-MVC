@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SchoolManagementApp.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace SchoolManagementApp.Services
@@ -31,11 +32,13 @@ namespace SchoolManagementApp.Services
 
         public SelectList GetLecturers()
         {
-            return new SelectList(_context.Lecturers.Select(l => new
-            {
-                Id = l.Id,
-                FullName = l.FirstName + " " + l.LastName
-            }), "Id", "FullName");
+            return new SelectList(_context.Lecturers
+          .Include(l => l.User) // Ensure User data is loaded
+          .Select(l => new
+          {
+              Id = l.Id,
+              FullName = l.User.FirstName + " " + l.User.LastName
+          }).ToList(), "Id", "FullName");
         }
 
         public SelectList GetStudents()

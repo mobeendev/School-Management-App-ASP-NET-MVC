@@ -67,6 +67,22 @@ namespace SchoolManagementApp.Data
                 .WithMany()
                 .HasForeignKey(cs => cs.LecturerId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Lecturer>()
+                .HasOne(l => l.User)
+                .WithOne()
+                .HasForeignKey<Lecturer>(l => l.UserId)
+                .OnDelete(DeleteBehavior.Cascade); // Cascade delete if needed
+
+
+            // Rename default tables
+            modelBuilder.Entity<ApplicationUser>().ToTable("Users"); // Rename AspNetUsers
+            modelBuilder.Entity<IdentityRole>().ToTable("Roles"); // Rename AspNetRoles
+            modelBuilder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims"); // Rename AspNetUserClaims
+            modelBuilder.Entity<IdentityUserRole<string>>().ToTable("UserRoles"); // Rename AspNetUserRoles
+            modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins"); // Rename AspNetUserLogins
+            modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims"); // Rename AspNetRoleClaims
+            modelBuilder.Entity<IdentityUserToken<string>>().ToTable("UserTokens"); // Rename AspNetUserTokens
         }
 
     }
