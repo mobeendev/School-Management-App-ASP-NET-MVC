@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - School Management System ASP NET MVC</title>
+    <title>@ViewData["Title"] - School Management System ASP.NET MVC</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.2.0/css/bootstrap.min.css" />
@@ -17,82 +17,97 @@
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">School Management App
-                    MVC</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">School Management</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="Courses"
-                                    asp-action="Index">Courses</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="Lecturers"
-                                    asp-action="Index">Lecturers</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="Students"
-                                    asp-action="Index">Students</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="Classes" asp-action="Index">Class
-                                    Management</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="Semesters"
-                                    asp-action="Index">Semester</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="Enrollments"
-                                    asp-action="Index">Enrollments</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="Reports"
-                                    asp-action="Index">Reports</a>
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                             </li>
 
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="Attendance"
-                                    asp-action="Index">Attendance</a>
-                            </li>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("Admin") || User.IsInRole("Lecturer"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Courses" asp-action="Index">Courses</a>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="adminMenu" role="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        Management
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="adminMenu">
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Lecturers"
+                                                asp-action="Index">Manage Lecturers</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Students"
+                                                asp-action="Index">Manage Students</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Classes"
+                                                asp-action="Index">Manage Classes</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Semesters"
+                                                asp-action="Index">Manage Semesters</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Enrollments"
+                                                asp-action="Index">Manage Enrollments</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="ClassSchedule"
+                                                asp-action="Index">Schedule Class</a></li>
+                                    </ul>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("Admin") || User.IsInRole("Lecturer"))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="academicMenu" role="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        Academic
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="academicMenu">
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Reports"
+                                                asp-action="Index">Reports</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Attendance"
+                                                asp-action="Index">Attendance</a></li>
+                                    </ul>
+                                </li>
+                            }
                         }
                     </ul>
-                    <div class="d-flex align-items-center">
 
+                    <div class="d-flex align-items-center">
                         @if (signInManager.IsSignedIn(User))
                         {
-                            <div class="me-3 text-light">
-                                @User?.Identity?.Name
-                            </div>
-
-                            <a class="btn me-3 bg-light text-dark" asp-area="" asp-controller="Account"
+                            <div class="me-3 text-light">@User?.Identity?.Name</div>
+                            <a class="btn btn-light text-dark me-2" asp-area="" asp-controller="Account"
                                 asp-action="Logout">Logout</a>
                         }
                         else
                         {
-                            <a class="btn me-3 bg-light text-dark" asp-area="" asp-controller="Account"
+                            <a class="btn btn-light text-dark me-2" asp-area="" asp-controller="Account"
                                 asp-action="Login">Login</a>
-
-                            <a class="btn me-3 bg-light text-dark" asp-area="" asp-controller="Account"
+                            <a class="btn btn-light text-dark" asp-area="" asp-controller="Account"
                                 asp-action="Register">Register</a>
-
                         }
-
                     </div>
                 </div>
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             <partial name="_Messages" />
@@ -102,10 +117,11 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; @DateTime.Now.Year - School Management App MVC - <a asp-area="" asp-controller="Home"
+            &copy; @DateTime.Now.Year - School Management System - <a asp-area="" asp-controller="Home"
                 asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
@@ -113,6 +129,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 
 </html>

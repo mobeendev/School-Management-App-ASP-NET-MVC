@@ -12,22 +12,22 @@
 <table class="table">
     <thead>
         <tr>
-                        <th>
-              Class 
+            <th>
+                Class
             </th>
             <th>
-             Lecturer
+                Lecturer
             </th>
 
-              <th>
-             Day
+            <th>
+                Day
             </th>
 
-              <th>
-             Time
+            <th>
+                Time
             </th>
-              <th>
-               Action
+            <th>
+                Action
             </th>
         </tr>
     </thead>
@@ -35,22 +35,22 @@
         @foreach (var item in Model)
         {
             <tr>
-                 <td>
-                    @(item.Class  != null && item.Class.Course != null ? item.Class.Course.Name : "No Course Assigned")
+                <td>
+                    @(item.Class != null && item.Class.Course != null ? item.Class.Course.Name : "No Course Assigned")
                 </td>
 
-                 <td>
-                    @(item.Lecturer != null ? item.Lecturer.FirstName + " " + item.Lecturer.LastName : "No Lecturer Assigned")
+                <td>
+                    @(item.Lecturer != null ? item.Lecturer.Id + " " + item.Lecturer.Id : "No Lecturer Assigned")
                 </td>
 
-                 <td>
+                <td>
                     @(item.Day)
                 </td>
 
-                 <td>
+                <td>
                     @(item.StartTime)
                 </td>
-                 <td>
+                <td>
                     <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
                     <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id">Details</a>
                     <button data-id="@item.Id" class="btn btn-danger deleteBtn" type="button">Delete</button>

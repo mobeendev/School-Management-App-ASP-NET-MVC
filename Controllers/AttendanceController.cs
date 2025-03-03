@@ -47,7 +47,7 @@ namespace SchoolManagementApp.Controllers
                 {
                     c.Id,
                     c.SemesterId,  // Added SemesterId
-                    Name = $"Class {c.Course.Code} by {c.Lecturer.FirstName} {c.Lecturer.LastName}"
+                    Name = $"Class {c.Course.Code} by {c.Lecturer.Id} {c.Lecturer.Id}"
                 })
                 .ToListAsync();
 
@@ -70,7 +70,10 @@ namespace SchoolManagementApp.Controllers
             var students = await _context.Enrollments
                 .Where(e => e.ClassId == classId)
                 .Include(e => e.Class)
-                .ThenInclude(e => e.Course)
+                        .ThenInclude(c => c.Course) // Include Course details
+                .Include(e => e.Class)
+                    .ThenInclude(c => c.Lecturer) // Include Lecturer
+                        .ThenInclude(l => l.User) // Include ApplicationUser for FirstName & LastName
                 .Include(e => e.Student)
                 .Include(e => e.Semester)
                 .Select(e => new
@@ -78,7 +81,7 @@ namespace SchoolManagementApp.Controllers
                     e.Student.Id,
                     FullName = e.Student.FirstName + " " + e.Student.LastName,
                     SemesterInfo = e.Semester.Type + "(" + e.Semester.StartDate.ToString("yyyy-MM") + ")-(" + e.Semester.EndDate.ToString("yyyy-MM") + ")",
-                    ClassName = $"{e.Class.Course.Code} by {e.Class.Lecturer.FirstName} {e.Class.Lecturer.LastName}",
+                    ClassName = $"{e.Class.Course.Code} by {e.Class.Lecturer.User.FirstName} {e.Class.Lecturer.User.LastName}",
                     Attendance = _context.Attendances
                         .Where(a => a.StudentId == e.Student.Id && a.ClassId == classId && a.SemesterId == e.SemesterId && a.Date.Date == date.Value.Date)
                         .Select(a => new { a.IsPresent })

@@ -12,6 +12,7 @@ options.UseSqlite(builder.Configuration.GetConnectionString("SchoolDBConnection"
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<SchoolManagementDbContext>();
 builder.Services.AddScoped<DropdownService>();
+builder.Services.AddScoped<DataSeeder>();
 
 builder.Services.AddSession();
 
@@ -19,7 +20,14 @@ builder.Services.AddSession();
 var app = builder.Build();
 
 // Seed roles and users
-await DataSeeder.SeedRolesAndUsers(app);
+// await DataSeeder.SeedRolesAndUsers(app);
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var dataSeeder = services.GetRequiredService<DataSeeder>();
+    await dataSeeder.SeedRolesAndUsers();
+}
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

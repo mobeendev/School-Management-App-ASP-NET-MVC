@@ -1,4 +1,4 @@
-@model SchoolManagementApp.Data.Lecturer
+@model SchoolManagementApp.Models.LecturerViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -7,19 +7,125 @@
 <h1>Create Lecturer</h1>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-12">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="FirstName" class="control-label"></label>
+                        <input asp-for="FirstName" class="form-control" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="LastName" class="control-label"></label>
+                        <input asp-for="LastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Gender"></label>
+                        <select asp-for="Gender" class="form-control">
+                            <option value="">Select Gender</option>
+                            @foreach (var gender in ViewBag.Genders)
+                            {
+                                <option value="@gender.Value">@gender.Name</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
-            <br>
-            <div class="form-group">
-                <label asp-for="LastName" class="control-label"></label>
-                <input asp-for="LastName" class="form-control" />
-                <span asp-validation-for="LastName" class="text-danger"></span>
+
+
+            <div class="row mt-2">
+
+                <div class="col-md-4">
+
+                    <div class="form-group">
+                        <label asp-for="Email"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <div class="form-group">
+                        <label asp-for="Password"></label>
+                        <input asp-for="Password" class="form-control" type="password" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                </div>
+
+                <div class="col-md-4">
+
+
+                    <div class="form-group">
+                        <label asp-for="Salary"></label>
+                        <input asp-for="Salary" class="form-control" />
+                        <span asp-validation-for="Salary" class="text-danger"></span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="YearsOfExperience"></label>
+                        <input asp-for="YearsOfExperience" class="form-control" />
+                        <span asp-validation-for="YearsOfExperience" class="text-danger"></span>
+                    </div>
+                </div>
+
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Designation"></label>
+                        <input asp-for="Designation" class="form-control" />
+                        <span asp-validation-for="Designation" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="Qualification">Qualification</label>
+                        <select asp-for="Qualification" class="form-control">
+                            @foreach (var qualification in Enum.GetValues(typeof(Qualification)).Cast<Qualification>())
+                            {
+                                <option value="@qualification">@qualification</option>
+                            }
+                        </select>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row mt-2">
+
+                <div class="col-md-4">
+
+                    <div class="form-group">
+                        <label asp-for="Role"></label>
+                        <select asp-for="Role" class="form-control">
+                            <option value="">Select Role</option>
+                            @foreach (var role in ViewBag.Roles)
+                            {
+                                <option value="@role.Name">@role.Name</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Role" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
             <br>
             <div class="form-group">

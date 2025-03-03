@@ -12,14 +12,14 @@
 <table class="table">
     <thead>
         <tr>
-                        <th>
+            <th>
                 @Html.DisplayNameFor(model => model.Course.Name)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Lecturer)
             </th>
-              <th>
-               Action
+            <th>
+                Action
             </th>
         </tr>
     </thead>
@@ -27,14 +27,14 @@
         @foreach (var item in Model)
         {
             <tr>
-                 <td>
+                <td>
                     @(item.Lecturer != null ? item.Course.Name : "No Course Assigned")
                 </td>
 
-                 <td>
-                    @(item.Lecturer != null ? item.Lecturer.FirstName + " " + item.Lecturer.LastName : "No Lecturer Assigned")
+                <td>
+                    @(item.Lecturer != null ? item.Lecturer.ToString() : "No Lecturer Assigned")
                 </td>
-                 <td>
+                <td>
                     <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
                     <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id">Details</a>
                     <button data-id="@item.Id" class="btn btn-danger deleteBtn" type="button">Delete</button>

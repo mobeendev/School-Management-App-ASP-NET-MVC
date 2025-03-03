@@ -13,12 +13,26 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.FirstName)
+                @Html.DisplayNameFor(model => model.Id)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LastName)
+                Name
             </th>
-            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.Salary)
+            </th>
+            <th>
+                Qualification
+            </th>
+            <th>
+                Experience
+            </th>
+            <th>
+                Teaching Hours
+            </th>
+            <th>
+                Actions
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -26,10 +40,22 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.FirstName)
+                    @Html.DisplayFor(modelItem => item.Id)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.LastName)
+                    @item.ToString()
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Salary)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Qualification)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.YearsOfExperience)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TeachingHoursPerWeek)
                 </td>
                 <td>
                     <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
