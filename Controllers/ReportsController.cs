@@ -76,16 +76,16 @@ namespace SchoolManagementApp.Controllers
         [HttpGet]
         public async Task<IActionResult> GetClassesByCourseAndSemester(int courseId, int semesterId)
         {
-            // var classes = await _context.Classes
-            //     .Where(c => c.CourseId == courseId && c.SemesterId == semesterId)
-            //     .Select(c => new { c.Id, Name = $"Class {c.Id}" })
-            //     .ToListAsync();
-
             var classes = await _context.Classes
        .Where(c => c.CourseId == courseId && c.SemesterId == semesterId)
-        .Include(c => c.Lecturer)
+        .Include(c => c.Lecturer) // Include Lecturer
+            .ThenInclude(l => l.User) // Include ApplicationUser for FirstName & LastName
         .Include(c => c.Course)
-        .Select(c => new { c.Id, Name = $"Class {c.Course.Code} by {c.Lecturer.Id} {c.Lecturer.Id}  " })
+        .Select(c => new
+        {
+            c.Id,
+            Name = $"Class {c.Course.Code} by {(c.Lecturer.User != null ? c.Lecturer.User.FirstName + " " + c.Lecturer.User.LastName : "Unknown Lecturer")}"
+        })
        .ToListAsync();
 
 

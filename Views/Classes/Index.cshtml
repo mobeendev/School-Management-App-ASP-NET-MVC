@@ -32,7 +32,7 @@
                 </td>
 
                 <td>
-                    @(item.Lecturer != null ? item.Lecturer.Id + " " + item.Lecturer.Id : "No Lecturer Assigned")
+                    @(item.Lecturer != null ? item.Lecturer.ToString() : "No Lecturer Assigned")
                 </td>
                 <td>
                     <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a>

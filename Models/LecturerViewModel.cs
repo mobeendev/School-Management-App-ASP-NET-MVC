@@ -4,13 +4,14 @@ using SchoolManagementApp.Data;
 namespace SchoolManagementApp.Models;
 public class LecturerViewModel
 {
+    public int Id { get; set; }
+
     [Required]
     [EmailAddress]
     public string Email { get; set; }
 
-    [Required]
     [DataType(DataType.Password)]
-    public string Password { get; set; }
+    public string? Password { get; set; }
 
     [Display(Name = "First Name")]
     public string FirstName { get; set; } = null!;

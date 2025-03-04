@@ -24,6 +24,10 @@ namespace SchoolManagementApp.Data
 
         public virtual ICollection<Class> Classes { get; } = new List<Class>();
 
+        public override string ToString()
+        {
+            return User != null ? $"{User.FirstName} {User.LastName} --" : "Unknown Lecturer";
+        }
     }
 
 }

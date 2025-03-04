@@ -26,8 +26,7 @@ namespace SchoolManagementApp.Controllers
         // GET: Classes
         public async Task<IActionResult> Index()
         {
-            var schoolManagementDbContext = _context.Classes.Include(q => q.Course).Include(q => q.Lecturer);
-
+            var schoolManagementDbContext = _context.Classes.Include(q => q.Course).Include(q => q.Lecturer).ThenInclude(u => u.User);
 
             return schoolManagementDbContext != null ?
                    View(await schoolManagementDbContext.ToListAsync()) :
