@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using SchoolManagementApp.Data;
 using SchoolManagementApp.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SchoolManagementApp.Controllers
 {
+    [Authorize]
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> userManager;
@@ -18,9 +20,9 @@ namespace SchoolManagementApp.Controllers
             this.userManager = userManager;
             this.signInManager = signInManager;
             this._context = _context;
-
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Register()
         {
@@ -90,74 +92,48 @@ namespace SchoolManagementApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult Login(string? ReturnUrl = null)
+        [AllowAnonymous]
+        public IActionResult Login(string? returnUrl = null)
         {
             var model = new LoginViewModel
             {
-                ReturnUrl = ReturnUrl
+                ReturnUrl = returnUrl
             };
+            return View(model);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await signInManager.PasswordSignInAsync(model.Email, 
+                    model.Password, 
+                    isPersistent: false, 
+                    lockoutOnFailure: false);
+
+                if (result.Succeeded)
+                {
+                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                    {
+                        return Redirect(model.ReturnUrl);
+                    }
+                    return RedirectToAction("Index", "Home");
+                }
+                
+                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            }
 
             return View(model);
         }
 
-
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel loginViewModel)
-        {
-            var user = await userManager.FindByEmailAsync(loginViewModel.Email);
-            if (user == null)
-            {
-                // User not found
-                ModelState.AddModelError(string.Empty, "Invalid Email.");
-                return View(loginViewModel);
-            }
-
-            if (await userManager.IsLockedOutAsync(user))
-            {
-                ModelState.AddModelError(string.Empty, "Account is locked.");
-                return View(loginViewModel);
-            }
-
-            var isPasswordValid = await userManager.CheckPasswordAsync(user, loginViewModel.Password);
-            if (!isPasswordValid)
-            {
-                // Password is incorrect
-                ModelState.AddModelError(string.Empty, "Invalid password.");
-                return View(loginViewModel);
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return View();
-            }
-
-            var signInResult = await signInManager.PasswordSignInAsync(loginViewModel.Email,
-                loginViewModel.Password, false, false);
-
-            if (signInResult.IsLockedOut)
-            {
-                // Handle account lockout
-                ModelState.AddModelError(string.Empty, "Account is locked.");
-                return View(loginViewModel);
-            }
-
-            if (signInResult != null && signInResult.Succeeded)
-            {
-                if (!string.IsNullOrWhiteSpace(loginViewModel.ReturnUrl))
-                {
-                    return Redirect(loginViewModel.ReturnUrl);
-                }
-
-                return RedirectToAction("Index", "Home");
-            }
-
-            // Show errors
-            return View();
-        }
-
-        [HttpGet]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
+            // Clear the existing external cookie
             await signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
@@ -173,6 +149,5 @@ namespace SchoolManagementApp.Controllers
             // Simulate checking the database for the email (replace with actual logic)
             return _context.Users.Any(u => u.Email == email);
         }
-
     }
 }

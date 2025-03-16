@@ -92,8 +92,10 @@
                         @if (signInManager.IsSignedIn(User))
                         {
                             <div class="me-3 text-light">@User?.Identity?.Name</div>
-                            <a class="btn btn-light text-dark me-2" asp-area="" asp-controller="Account"
-                                asp-action="Logout">Logout</a>
+                            <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-light text-dark me-2">Logout</button>
+                            </form>
                         }
                         else
                         {

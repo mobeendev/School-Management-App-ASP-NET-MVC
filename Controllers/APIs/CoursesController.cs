@@ -5,12 +5,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SchoolManagementApp.Data;
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SchoolManagementApp.Controllers.APIs
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class CoursesController : ControllerBase
     {
         private readonly SchoolManagementDbContext _context;
@@ -41,7 +43,7 @@ namespace SchoolManagementApp.Controllers.APIs
 
             if (course == null)
             {
-                return NotFound("Course not found.");
+                return BadRequest(new { Status = "Error", Message = "Course not found." });
             }
 
             return Ok(course);
