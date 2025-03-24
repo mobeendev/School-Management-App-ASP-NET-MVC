@@ -7,37 +7,34 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using SchoolManagementApp.Data;
+using SchoolManagementApp.Interfaces;
 
 namespace SchoolManagementApp.Controllers
 {
     [Authorize]
     public class CoursesController : BaseController
     {
-        private readonly SchoolManagementDbContext _context;
+        private readonly ICourseRepository _courseRepository;
 
-        public CoursesController(SchoolManagementDbContext context)
+        public CoursesController(ICourseRepository courseRepository)
         {
-            _context = context;
+            _courseRepository = courseRepository;
         }
-
 
         public async Task<IActionResult> Index()
         {
-            return _context.Courses != null ?
-                        View(await _context.Courses.ToListAsync()) :
-                        Problem("Entity set 'SchoolManagementDbContext.Courses'  is null.");
+            var courses = await _courseRepository.GetAllAsync();
+            return View(courses);
         }
 
-        // GET: Courses/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Courses == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var course = await _context.Courses
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var course = await _courseRepository.GetByIdAsync(id.Value);
             if (course == null)
             {
                 return NotFound();
@@ -46,40 +43,32 @@ namespace SchoolManagementApp.Controllers
             return View(course);
         }
 
-        // GET: Courses/Create
         public IActionResult Create()
         {
             return View();
         }
 
-
-        // POST: Courses/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Code,Credits")] Course course)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(course);
-                await _context.SaveChangesAsync();
-
-                SetSuccessMessage("Course created successfully!"); // ✅ Centralized success message
+                await _courseRepository.AddAsync(course);
+                SetSuccessMessage("Course created successfully!");
                 return RedirectToAction(nameof(Index));
             }
             return View(course);
         }
 
-        // GET: Courses/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Courses == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var course = await _context.Courses.FindAsync(id);
+            var course = await _courseRepository.GetByIdAsync(id.Value);
             if (course == null)
             {
                 return NotFound();
@@ -88,9 +77,6 @@ namespace SchoolManagementApp.Controllers
             return View(course);
         }
 
-        // POST: Courses/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Code,Credits")] Course course)
@@ -104,12 +90,11 @@ namespace SchoolManagementApp.Controllers
             {
                 try
                 {
-                    _context.Update(course);
-                    await _context.SaveChangesAsync();
+                    await _courseRepository.UpdateAsync(course);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CourseExists(course.Id))
+                    if (!await _courseRepository.ExistsAsync(course.Id))
                     {
                         return NotFound();
                     }
@@ -119,23 +104,20 @@ namespace SchoolManagementApp.Controllers
                     }
                 }
 
-                SetSuccessMessage("Course updated successfully!"); // ✅ Centralized success message
-
+                SetSuccessMessage("Course updated successfully!");
                 return RedirectToAction(nameof(Index));
             }
             return View(course);
         }
 
-        // GET: Courses/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Courses == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var course = await _context.Courses
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var course = await _courseRepository.GetByIdAsync(id.Value);
             if (course == null)
             {
                 return NotFound();
@@ -144,30 +126,18 @@ namespace SchoolManagementApp.Controllers
             return View(course);
         }
 
-
-        // POST: Courses/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Courses == null)
-            {
-                return Problem("Entity set 'SchoolManagementDbContext.Courses' is null.");
-            }
-            var course = await _context.Courses.FindAsync(id);
+            var course = await _courseRepository.GetByIdAsync(id);
             if (course != null)
             {
-                _context.Courses.Remove(course);
+                await _courseRepository.DeleteAsync(course);
             }
 
-            await _context.SaveChangesAsync();
-            SetSuccessMessage("Course deleted successfully!"); // ✅ Centralized success message
+            SetSuccessMessage("Course deleted successfully!");
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool CourseExists(int id)
-        {
-            return (_context.Courses?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

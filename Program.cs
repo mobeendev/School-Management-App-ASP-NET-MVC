@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using SchoolManagementApp.Repositories;
+using SchoolManagementApp.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<SchoolManagementDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("SchoolDBConnection")));
+
+// Register repositories and interfaces
+builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 
 // Configure Identity with default cookie authentication
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
