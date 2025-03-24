@@ -17,6 +17,9 @@ builder.Services.AddScoped<DropdownService>();
 builder.Services.AddScoped<DataSeeder>();
 // Register repositories and interfaces
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
+builder.Services.AddScoped<IClassRepository, ClassRepository>();
+builder.Services.AddScoped<IClassScheduleRepository, ClassScheduleRepository>();
+builder.Services.AddScoped<ILecturerRepository, LecturerRepository>();
 
 builder.Services.AddSession();
 

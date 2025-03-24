@@ -8,46 +8,38 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using SchoolManagementApp.Data;
 using SchoolManagementApp.Services;
+using SchoolManagementApp.Interfaces;
 
 namespace SchoolManagementApp.Controllers
 {
     [Authorize]
     public class ClassesController : BaseController
     {
-        private readonly SchoolManagementDbContext _context;
+        private readonly IClassRepository _classRepository;
         private readonly DropdownService _dropdownService;
 
-        public ClassesController(SchoolManagementDbContext context, DropdownService dropdownService)
+        public ClassesController(IClassRepository classRepository, DropdownService dropdownService)
         {
-            _context = context;
+            _classRepository = classRepository;
             _dropdownService = dropdownService;
         }
 
         // GET: Classes
         public async Task<IActionResult> Index()
         {
-            var schoolManagementDbContext = _context.Classes.Include(q => q.Course).Include(q => q.Lecturer).ThenInclude(u => u.User);
-
-            return schoolManagementDbContext != null ?
-                   View(await schoolManagementDbContext.ToListAsync()) :
-                   Problem("Entity set 'SchoolManagementDbContext.Courses'  is null.");
-
-
-            // return View(await schoolManagementDbContext.ToListAsync());
+            var classes = await _classRepository.GetAllClassesWithDetailsAsync();
+            return View(classes);
         }
 
         // GET: Classes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Classes == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var @class = await _context.Classes
-                .Include(q => q.Course)
-                .Include(q => q.Lecturer)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var @class = await _classRepository.GetClassWithDetailsAsync(id.Value);
             if (@class == null)
             {
                 return NotFound();
@@ -59,12 +51,9 @@ namespace SchoolManagementApp.Controllers
         // GET: Classes/Create
         public IActionResult Create()
         {
-
             ViewData["CourseId"] = _dropdownService.GetCourses();
             ViewData["LecturerId"] = _dropdownService.GetLecturers();
             ViewData["SemesterId"] = _dropdownService.GetSemesters();
-
-
             return View();
         }
 
@@ -73,29 +62,28 @@ namespace SchoolManagementApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Class @class)
         {
-            // if (ModelState.IsValid)
-            // {
-            _context.Add(@class);
-            await _context.SaveChangesAsync();
+            if (ModelState.IsValid)
+            {
+                await _classRepository.AddAsync(@class);
+                SetSuccessMessage("Class created successfully!");
+                return RedirectToAction(nameof(Index));
+            }
 
-            SetSuccessMessage("Class created successfully!"); // ✅ Centralized success message
-            return RedirectToAction(nameof(Index));
-            // }
-
-            // SetErrorMessage("Error! Creating class!"); // ✅ Centralized error message
-            // return View(@class); // Return the view with the current model to show validation errors
+            ViewData["CourseId"] = _dropdownService.GetCourses();
+            ViewData["LecturerId"] = _dropdownService.GetLecturers();
+            ViewData["SemesterId"] = _dropdownService.GetSemesters();
+            return View(@class);
         }
-
 
         // GET: Classes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Classes == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var @class = await _context.Classes.FindAsync(id);
+            var @class = await _classRepository.GetByIdAsync(id.Value);
             if (@class == null)
             {
                 return NotFound();
@@ -103,7 +91,6 @@ namespace SchoolManagementApp.Controllers
 
             ViewData["CourseId"] = _dropdownService.GetCourses();
             ViewData["LecturerId"] = _dropdownService.GetLecturers();
-
             return View(@class);
         }
 
@@ -121,12 +108,11 @@ namespace SchoolManagementApp.Controllers
             {
                 try
                 {
-                    _context.Update(@class);
-                    await _context.SaveChangesAsync();
+                    await _classRepository.UpdateAsync(@class);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ClassExists(@class.Id))
+                    if (!await _classRepository.ExistsAsync(@class.Id))
                     {
                         return NotFound();
                     }
@@ -136,28 +122,24 @@ namespace SchoolManagementApp.Controllers
                     }
                 }
 
-                SetSuccessMessage("Class updated successfully!"); // ✅ Centralized success message
+                SetSuccessMessage("Class updated successfully!");
                 return RedirectToAction(nameof(Index));
             }
 
             ViewData["CourseId"] = _dropdownService.GetCourses();
             ViewData["LecturerId"] = _dropdownService.GetLecturers();
-
             return View(@class);
         }
 
         // GET: Classes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Classes == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var @class = await _context.Classes
-                .Include(q => q.Course)
-                .Include(q => q.Lecturer)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var @class = await _classRepository.GetClassWithDetailsAsync(id.Value);
             if (@class == null)
             {
                 return NotFound();
@@ -173,31 +155,26 @@ namespace SchoolManagementApp.Controllers
         {
             try
             {
-                if (_context.Classes == null)
+                if (await _classRepository.HasEnrollmentsAsync(id))
                 {
-                    return Problem("Entity set 'SchoolManagementDbContext.Classes' is null.");
+                    SetErrorMessage("Unable to delete the class because it has associated enrollments.");
+                    return RedirectToAction(nameof(Index));
                 }
-                var @class = await _context.Classes.FindAsync(id);
+
+                var @class = await _classRepository.GetByIdAsync(id);
                 if (@class != null)
                 {
-                    _context.Classes.Remove(@class);
+                    await _classRepository.DeleteAsync(@class);
+                    SetSuccessMessage("Class deleted successfully!");
                 }
 
-                await _context.SaveChangesAsync();
-                SetSuccessMessage("Class deleted successfully!"); // ✅ Centralized success message
                 return RedirectToAction(nameof(Index));
             }
-            catch (DbUpdateException ex)
+            catch (Exception)
             {
-                TempData["ErrorMessage"] = "Error: Unable to delete the class because it has associated enrollments.";
-                return RedirectToAction("Index");
+                SetErrorMessage("An error occurred while deleting the class.");
+                return RedirectToAction(nameof(Index));
             }
         }
-
-        private bool ClassExists(int id)
-        {
-            return (_context.Classes?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-
     }
 }
