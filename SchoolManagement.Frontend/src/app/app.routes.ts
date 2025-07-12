@@ -54,5 +54,9 @@ export const routes: Routes = [
     path: 'schedule', 
     loadComponent: () => import('./components/schedule/schedule.component').then(m => m.ScheduleComponent)
   },
+  { 
+    path: 'user-management', 
+    loadComponent: () => import('./components/user-management/user-management.component').then(m => m.UserManagementComponent)
+  },
   { path: '**', redirectTo: '/home' }
 ];

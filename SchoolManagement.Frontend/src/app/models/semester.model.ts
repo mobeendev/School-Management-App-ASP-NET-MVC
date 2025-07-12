@@ -28,8 +28,8 @@ export interface UpdateSemesterDto {
 }
 
 export enum SemesterType {
-  Spring = 'Spring',
-  Summer = 'Summer',
-  Fall = 'Fall',
-  Winter = 'Winter'
+  Spring = 0,
+  Summer = 1,
+  Fall = 2,
+  Winter = 3
 }

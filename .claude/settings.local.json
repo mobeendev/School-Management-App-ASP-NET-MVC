@@ -14,7 +14,10 @@
       "Bash(npx tailwindcss:*)",
       "Bash(ng generate component:*)",
       "Bash(npm uninstall:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(sqlite3:*)",
+      "Bash(curl:*)"
     ],
     "deny": []
   }

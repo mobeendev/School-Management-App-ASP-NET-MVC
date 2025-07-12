@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -9,7 +8,6 @@ import { MainLayoutComponent } from './components/layout/main-layout/main-layout
 @Component({
   selector: 'app-root',
   imports: [
-    RouterOutlet,
     CommonModule,
     FormsModule,
     MainLayoutComponent

@@ -26,9 +26,9 @@ namespace SchoolManagement.Services.Implementations
             return lecturer == null ? null : MapToDto(lecturer);
         }
 
-        public async Task<LecturerDto> CreateLecturerAsync(LecturerDto lecturerDto)
+        public async Task<LecturerDto> CreateLecturerAsync(CreateLecturerDto createLecturerDto)
         {
-            var lecturer = MapToEntity(lecturerDto);
+            var lecturer = MapToEntity(createLecturerDto);
             var createdLecturer = await _lecturerRepository.AddAsync(lecturer);
             return MapToDto(createdLecturer);
         }
@@ -84,6 +84,21 @@ namespace SchoolManagement.Services.Implementations
                 WorkPhoneNumber = lecturerDto.WorkPhoneNumber,
                 TeachingHoursPerWeek = lecturerDto.TeachingHoursPerWeek,
                 Status = lecturerDto.Status
+            };
+        }
+
+        private static Lecturer MapToEntity(CreateLecturerDto createLecturerDto)
+        {
+            return new Lecturer
+            {
+                UserId = createLecturerDto.UserId,
+                Salary = createLecturerDto.Salary,
+                Designation = createLecturerDto.Designation,
+                Qualification = createLecturerDto.Qualification,
+                YearsOfExperience = createLecturerDto.YearsOfExperience,
+                WorkPhoneNumber = createLecturerDto.WorkPhoneNumber,
+                TeachingHoursPerWeek = createLecturerDto.TeachingHoursPerWeek,
+                Status = createLecturerDto.Status
             };
         }
     }

@@ -54,19 +54,19 @@ namespace SchoolManagement.Api.Controllers
         /// <summary>
         /// Creates a new lecturer
         /// </summary>
-        /// <param name="lecturerDto">Lecturer data</param>
+        /// <param name="createLecturerDto">Lecturer data</param>
         /// <returns>Created lecturer</returns>
         [HttpPost]
         [ProducesResponseType(typeof(LecturerDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Create([FromBody] LecturerDto lecturerDto)
+        public async Task<IActionResult> Create([FromBody] CreateLecturerDto createLecturerDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var createdLecturer = await _lecturerService.CreateLecturerAsync(lecturerDto);
+            var createdLecturer = await _lecturerService.CreateLecturerAsync(createLecturerDto);
             return CreatedAtAction(nameof(GetById), new { id = createdLecturer.Id }, createdLecturer);
         }
 

@@ -7,7 +7,7 @@ namespace SchoolManagement.Services.Interfaces
     {
         Task<IEnumerable<LecturerDto>> GetAllLecturersAsync();
         Task<LecturerDto?> GetLecturerByIdAsync(int id);
-        Task<LecturerDto> CreateLecturerAsync(LecturerDto lecturerDto);
+        Task<LecturerDto> CreateLecturerAsync(CreateLecturerDto createLecturerDto);
         Task<LecturerDto> UpdateLecturerAsync(LecturerDto lecturerDto);
         Task<bool> DeleteLecturerAsync(int id);
         Task<bool> LecturerExistsAsync(int id);
