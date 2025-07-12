@@ -1,0 +1,31 @@
+/* Footer Component Styles */
+footer {
+  margin-top: auto;
+}
+
+.footer-link {
+  transition: color 0.2s ease-in-out;
+}
+
+.footer-link:hover {
+  color: #3b82f6;
+}
+
+.social-icon {
+  transition: transform 0.2s ease-in-out;
+}
+
+.social-icon:hover {
+  transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .footer-content {
+    text-align: center;
+  }
+  
+  .footer-links {
+    margin-top: 1rem;
+  }
+}

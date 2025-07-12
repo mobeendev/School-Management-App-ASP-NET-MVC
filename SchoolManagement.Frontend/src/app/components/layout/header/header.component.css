@@ -1,0 +1,63 @@
+/* Header Component Styles */
+.nav-dropdown {
+  transition: all 0.2s ease-in-out;
+}
+
+.nav-dropdown.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.nav-dropdown.hide {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Mobile menu animations */
+.mobile-menu {
+  transition: all 0.3s ease-in-out;
+}
+
+.mobile-menu.show {
+  max-height: 400px;
+  opacity: 1;
+}
+
+.mobile-menu.hide {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+/* User avatar styles */
+.user-avatar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Hover effects */
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+}
+
+/* Focus styles for accessibility */
+.nav-link:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Dropdown animation */
+.dropdown-menu {
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

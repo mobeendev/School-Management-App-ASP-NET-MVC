@@ -1,0 +1,210 @@
+<nav class="bg-secondary-800 shadow-lg">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16">
+      <div class="flex">
+        <!-- Logo -->
+        <div class="flex-shrink-0 flex items-center">
+          <button 
+            class="text-white text-xl font-bold hover:text-primary-300 transition-colors"
+            (click)="navigateTo('/')"
+          >
+            School Management
+          </button>
+        </div>
+
+        <!-- Navigation Links (Desktop) -->
+        <div class="hidden md:ml-6 md:flex md:space-x-8" *ngIf="isAuthenticated">
+          <!-- Home -->
+          <a 
+            class="text-secondary-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors"
+            (click)="navigateTo('/')"
+          >
+            Home
+          </a>
+
+          <!-- Dashboard (Admin only) -->
+          <a 
+            *ngIf="isAdmin()"
+            class="text-secondary-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors"
+            (click)="navigateTo('/dashboard')"
+          >
+            Dashboard
+          </a>
+
+          <!-- Courses (Admin & Lecturer) -->
+          <a 
+            *ngIf="hasAdminOrLecturerRole()"
+            class="text-secondary-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors"
+            (click)="navigateTo('/courses')"
+          >
+            Courses
+          </a>
+
+          <!-- Management Dropdown (Admin only) -->
+          <div class="relative" *ngIf="isAdmin()">
+            <button 
+              class="text-secondary-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center transition-colors"
+              (click)="toggleManagementMenu()"
+            >
+              Management
+              <svg class="ml-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
+
+            <!-- Management Dropdown Menu -->
+            <div 
+              *ngIf="isManagementMenuOpen"
+              class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
+              (click)="closeMenus()"
+            >
+              <a (click)="navigateTo('/lecturers')" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                Manage Lecturers
+              </a>
+              <a (click)="navigateTo('/students')" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                Manage Students
+              </a>
+              <a (click)="navigateTo('/classes')" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                Manage Classes
+              </a>
+              <a (click)="navigateTo('/semesters')" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                Manage Semesters
+              </a>
+              <a (click)="navigateTo('/enrollments')" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                Manage Enrollments
+              </a>
+              <a (click)="navigateTo('/schedule')" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                Schedule Class
+              </a>
+            </div>
+          </div>
+
+          <!-- Academic Dropdown (Admin & Lecturer) -->
+          <div class="relative" *ngIf="hasAdminOrLecturerRole()">
+            <button 
+              class="text-secondary-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center transition-colors"
+            >
+              Academic
+              <svg class="ml-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
+
+            <!-- Academic Dropdown Menu -->
+            <div class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden">
+              <a (click)="navigateTo('/reports')" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                Reports
+              </a>
+              <a (click)="navigateTo('/attendance')" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                Attendance
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right side -->
+      <div class="flex items-center">
+        <div class="flex-shrink-0" *ngIf="isAuthenticated">
+          <!-- User Menu -->
+          <div class="relative">
+            <button 
+              class="bg-secondary-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-secondary-800 focus:ring-white"
+              (click)="toggleUserMenu()"
+            >
+              <span class="sr-only">Open user menu</span>
+              <div class="h-8 w-8 rounded-full bg-primary-600 flex items-center justify-center">
+                <span class="text-white text-sm font-medium">
+                  {{ user?.firstName?.charAt(0) || 'U' }}
+                </span>
+              </div>
+            </button>
+
+            <!-- User Dropdown Menu -->
+            <div 
+              *ngIf="isUserMenuOpen"
+              class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
+            >
+              <div class="px-4 py-2 text-sm text-secondary-700 border-b">
+                <div class="font-medium">{{ getUserDisplayName() }}</div>
+                <div class="text-xs text-secondary-500">{{ user?.email }}</div>
+              </div>
+              <a (click)="navigateTo('/profile')" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                Your Profile
+              </a>
+              <a (click)="navigateTo('/settings')" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                Settings
+              </a>
+              <a (click)="onLogout()" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                Sign out
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Auth buttons (when not authenticated) -->
+        <div class="flex space-x-2" *ngIf="!isAuthenticated">
+          <button 
+            class="btn-secondary text-sm px-4 py-2"
+            (click)="onLogin()"
+          >
+            Login
+          </button>
+          <button 
+            class="btn-primary text-sm px-4 py-2"
+            (click)="onRegister()"
+          >
+            Register
+          </button>
+        </div>
+
+        <!-- Mobile menu button -->
+        <div class="md:hidden ml-4">
+          <button 
+            class="text-secondary-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+            (click)="toggleMenu()"
+          >
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div class="md:hidden" *ngIf="isMenuOpen">
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <a 
+          *ngIf="isAuthenticated"
+          (click)="navigateTo('/')"
+          class="text-secondary-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium cursor-pointer"
+        >
+          Home
+        </a>
+        <a 
+          *ngIf="isAdmin()"
+          (click)="navigateTo('/dashboard')"
+          class="text-secondary-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium cursor-pointer"
+        >
+          Dashboard
+        </a>
+        <a 
+          *ngIf="hasAdminOrLecturerRole()"
+          (click)="navigateTo('/courses')"
+          class="text-secondary-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium cursor-pointer"
+        >
+          Courses
+        </a>
+        <!-- Add more mobile menu items as needed -->
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Click outside to close dropdowns -->
+<div 
+  *ngIf="isUserMenuOpen || isMenuOpen || isManagementMenuOpen" 
+  class="fixed inset-0 z-40" 
+  (click)="closeMenus()"
+></div>

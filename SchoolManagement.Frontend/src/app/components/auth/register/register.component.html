@@ -1,0 +1,192 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-8">
+    <div>
+      <h2 class="mt-6 text-center text-3xl font-extrabold text-secondary-900">
+        Create your account
+      </h2>
+      <p class="mt-2 text-center text-sm text-secondary-600">
+        School Management System
+      </p>
+    </div>
+    
+    <div class="card">
+      <div class="card-body">
+        <!-- Success Message -->
+        <div *ngIf="successMessage" class="mb-4 p-4 rounded-md bg-accent-50 border border-accent-200">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-accent-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-accent-800">{{ successMessage }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="mb-4 p-4 rounded-md bg-error-50 border border-error-200">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-error-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-error-800">{{ errorMessage }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Register Form -->
+        <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)" novalidate>
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label for="firstName" class="form-label">First Name</label>
+              <input 
+                type="text" 
+                id="firstName" 
+                name="firstName"
+                class="form-input w-full"
+                [(ngModel)]="registerData.firstName"
+                #firstName="ngModel"
+                required
+                placeholder="First name"
+                [class.border-error-500]="firstName.invalid && firstName.touched"
+              >
+              <div *ngIf="firstName.invalid && firstName.touched" class="mt-1 text-sm text-error-600">
+                <div *ngIf="firstName.errors?.['required']">First name is required</div>
+              </div>
+            </div>
+
+            <div>
+              <label for="lastName" class="form-label">Last Name</label>
+              <input 
+                type="text" 
+                id="lastName" 
+                name="lastName"
+                class="form-input w-full"
+                [(ngModel)]="registerData.lastName"
+                #lastName="ngModel"
+                required
+                placeholder="Last name"
+                [class.border-error-500]="lastName.invalid && lastName.touched"
+              >
+              <div *ngIf="lastName.invalid && lastName.touched" class="mt-1 text-sm text-error-600">
+                <div *ngIf="lastName.errors?.['required']">Last name is required</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="email" class="form-label">Email Address</label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email"
+              class="form-input w-full"
+              [(ngModel)]="registerData.email"
+              #email="ngModel"
+              required
+              email
+              placeholder="Enter your email"
+              [class.border-error-500]="email.invalid && email.touched"
+            >
+            <div *ngIf="email.invalid && email.touched" class="mt-1 text-sm text-error-600">
+              <div *ngIf="email.errors?.['required']">Email is required</div>
+              <div *ngIf="email.errors?.['email']">Please enter a valid email address</div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="phoneNumber" class="form-label">Phone Number</label>
+            <input 
+              type="tel" 
+              id="phoneNumber" 
+              name="phoneNumber"
+              class="form-input w-full"
+              [(ngModel)]="registerData.phoneNumber"
+              #phoneNumber="ngModel"
+              required
+              placeholder="Enter your phone number"
+              [class.border-error-500]="phoneNumber.invalid && phoneNumber.touched"
+            >
+            <div *ngIf="phoneNumber.invalid && phoneNumber.touched" class="mt-1 text-sm text-error-600">
+              <div *ngIf="phoneNumber.errors?.['required']">Phone number is required</div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="password" class="form-label">Password</label>
+            <input 
+              type="password" 
+              id="password" 
+              name="password"
+              class="form-input w-full"
+              [(ngModel)]="registerData.password"
+              #password="ngModel"
+              required
+              minlength="6"
+              placeholder="Enter your password"
+              [class.border-error-500]="password.invalid && password.touched"
+            >
+            <div *ngIf="password.invalid && password.touched" class="mt-1 text-sm text-error-600">
+              <div *ngIf="password.errors?.['required']">Password is required</div>
+              <div *ngIf="password.errors?.['minlength']">Password must be at least 6 characters</div>
+            </div>
+          </div>
+
+          <div class="mb-6">
+            <label for="confirmPassword" class="form-label">Confirm Password</label>
+            <input 
+              type="password" 
+              id="confirmPassword" 
+              name="confirmPassword"
+              class="form-input w-full"
+              [(ngModel)]="registerData.confirmPassword"
+              #confirmPassword="ngModel"
+              required
+              placeholder="Confirm your password"
+              [class.border-error-500]="(confirmPassword.invalid && confirmPassword.touched) || (!passwordsMatch() && confirmPassword.touched)"
+            >
+            <div *ngIf="confirmPassword.invalid && confirmPassword.touched" class="mt-1 text-sm text-error-600">
+              <div *ngIf="confirmPassword.errors?.['required']">Please confirm your password</div>
+            </div>
+            <div *ngIf="!passwordsMatch() && confirmPassword.touched && confirmPassword.valid" class="mt-1 text-sm text-error-600">
+              Passwords do not match
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <button 
+              type="submit" 
+              class="btn-primary w-full flex justify-center py-2 px-4 text-sm font-medium rounded-md"
+              [disabled]="registerForm.invalid || !passwordsMatch() || isLoading"
+              [class.opacity-50]="registerForm.invalid || !passwordsMatch() || isLoading"
+            >
+              <span *ngIf="isLoading" class="mr-2">
+                <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </span>
+              {{ isLoading ? 'Creating account...' : 'Create account' }}
+            </button>
+          </div>
+
+          <div class="text-center">
+            <span class="text-sm text-secondary-600">Already have an account?</span>
+            <button 
+              type="button" 
+              class="ml-1 font-medium text-primary-600 hover:text-primary-500"
+              (click)="onLoginClick()"
+            >
+              Sign in here
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
