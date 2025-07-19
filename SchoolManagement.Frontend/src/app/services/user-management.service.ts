@@ -77,28 +77,34 @@ export class UserManagementService {
 
   async updateUser(user: UpdateUserDto): Promise<UserManagementDto> {
     try {
-      const response = await firstValueFrom(this.http.put<UserManagementDto>(`${this.apiUrl}/${user.id}`, user));
+      console.log('UserManagementService - Updating user:', user);
+      const response = await firstValueFrom(this.http.put<UserManagementDto>(`${this.apiUrl}/${user.id}`, user, { headers: this.getHeaders() }));
+      console.log('UserManagementService - User updated successfully:', response);
       return response;
     } catch (error) {
-      console.error('Error updating user:', error);
+      console.error('UserManagementService - Error updating user:', error);
       throw error;
     }
   }
 
   async setUserActiveStatus(id: string, isActive: boolean): Promise<void> {
     try {
-      await firstValueFrom(this.http.patch(`${this.apiUrl}/${id}/status`, isActive));
+      console.log('UserManagementService - Setting user active status:', { id, isActive });
+      await firstValueFrom(this.http.patch(`${this.apiUrl}/${id}/status`, { isActive }, { headers: this.getHeaders() }));
+      console.log('UserManagementService - User status updated successfully');
     } catch (error) {
-      console.error('Error updating user status:', error);
+      console.error('UserManagementService - Error updating user status:', error);
       throw error;
     }
   }
 
   async deleteUser(id: string): Promise<void> {
     try {
-      await firstValueFrom(this.http.delete(`${this.apiUrl}/${id}`));
+      console.log('UserManagementService - Deleting user:', id);
+      await firstValueFrom(this.http.delete(`${this.apiUrl}/${id}`, { headers: this.getHeaders() }));
+      console.log('UserManagementService - User deleted successfully');
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.error('UserManagementService - Error deleting user:', error);
       throw error;
     }
   }

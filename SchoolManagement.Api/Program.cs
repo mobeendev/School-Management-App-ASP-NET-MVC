@@ -90,16 +90,7 @@ builder.Services.AddSwaggerGen(c =>
 // Add CORS for Angular frontend
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
-    {
-        policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
-    });
-    
-    // Also add a more permissive policy for development
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy("AngularApp", policy =>
     {
         policy.AllowAnyOrigin()
               .AllowAnyHeader()
@@ -167,7 +158,7 @@ app.UseSwaggerUI(c =>
 
 app.UseHttpsRedirection();
 
-app.UseCors();
+app.UseCors("AngularApp");
 
 app.UseAuthentication();
 app.UseAuthorization();

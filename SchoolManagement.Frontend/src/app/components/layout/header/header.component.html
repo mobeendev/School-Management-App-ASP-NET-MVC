@@ -5,39 +5,51 @@
         <!-- Logo -->
         <div class="flex-shrink-0 flex items-center">
           <button 
-            class="text-white text-xl font-bold hover:text-primary-300 transition-colors"
+            class="flex items-center text-white text-xl font-bold hover:text-primary-300 transition-colors"
             (click)="navigateTo('/')"
           >
+            <svg class="w-8 h-8 mr-3 text-primary-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"></path>
+            </svg>
             School Management
           </button>
         </div>
 
         <!-- Navigation Links (Desktop) -->
-        <div class="hidden md:ml-6 md:flex md:space-x-8" *ngIf="isAuthenticated">
+        <div class="hidden md:ml-6 md:flex md:items-center md:space-x-6" *ngIf="isAuthenticated">
           <!-- Home -->
           <a 
-            class="text-secondary-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors"
+            class="text-secondary-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors flex items-center"
             (click)="navigateTo('/')"
           >
-            Home
+            <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+            </svg>
+            <span>Home</span>
           </a>
 
           <!-- Dashboard (Admin only) -->
           <a 
             *ngIf="isAdmin()"
-            class="text-secondary-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors"
+            class="text-secondary-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors flex items-center"
             (click)="navigateTo('/dashboard')"
           >
-            Dashboard
+            <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+            </svg>
+            <span>Dashboard</span>
           </a>
 
           <!-- Courses (Admin & Lecturer) -->
           <a 
             *ngIf="hasAdminOrLecturerRole()"
-            class="text-secondary-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors"
+            class="text-secondary-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors flex items-center"
             (click)="navigateTo('/courses')"
           >
-            Courses
+            <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>Courses</span>
           </a>
 
           <!-- Management Dropdown (Admin only) -->
@@ -46,7 +58,10 @@
               class="text-secondary-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center transition-colors"
               (click)="toggleManagementMenu()"
             >
-              Management
+              <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+              </svg>
+              <span>Management</span>
               <svg class="ml-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
               </svg>
@@ -58,25 +73,46 @@
               class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
               (click)="closeMenus()"
             >
-              <a (click)="navigateTo('/user-management')" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+              <a (click)="navigateTo('/user-management')" class="flex items-center px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                <svg class="w-4 h-4 mr-3 text-secondary-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+                </svg>
                 User Management
               </a>
-              <a (click)="navigateTo('/lecturers')" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+              <a (click)="navigateTo('/lecturers')" class="flex items-center px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                <svg class="w-4 h-4 mr-3 text-secondary-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                </svg>
                 Manage Lecturers
               </a>
-              <a (click)="navigateTo('/students')" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+              <a (click)="navigateTo('/students')" class="flex items-center px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                <svg class="w-4 h-4 mr-3 text-secondary-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"></path>
+                </svg>
                 Manage Students
               </a>
-              <a (click)="navigateTo('/classes')" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+              <a (click)="navigateTo('/classes')" class="flex items-center px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                <svg class="w-4 h-4 mr-3 text-secondary-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"></path>
+                </svg>
                 Manage Classes
               </a>
-              <a (click)="navigateTo('/semesters')" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+              <a (click)="navigateTo('/semesters')" class="flex items-center px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                <svg class="w-4 h-4 mr-3 text-secondary-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                </svg>
                 Manage Semesters
               </a>
-              <a (click)="navigateTo('/enrollments')" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+              <a (click)="navigateTo('/enrollments')" class="flex items-center px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                <svg class="w-4 h-4 mr-3 text-secondary-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"></path>
+                </svg>
                 Manage Enrollments
               </a>
-              <a (click)="navigateTo('/schedule')" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+              <a (click)="navigateTo('/schedule')" class="flex items-center px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                <svg class="w-4 h-4 mr-3 text-secondary-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                </svg>
                 Schedule Class
               </a>
             </div>
@@ -86,19 +122,33 @@
           <div class="relative" *ngIf="hasAdminOrLecturerRole()">
             <button 
               class="text-secondary-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center transition-colors"
+              (click)="toggleAcademicMenu()"
             >
-              Academic
+              <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"></path>
+              </svg>
+              <span>Academic</span>
               <svg class="ml-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
               </svg>
             </button>
 
             <!-- Academic Dropdown Menu -->
-            <div class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden">
-              <a (click)="navigateTo('/reports')" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+            <div 
+              *ngIf="isAcademicMenuOpen"
+              class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
+              (click)="closeMenus()"
+            >
+              <a (click)="navigateTo('/reports')" class="flex items-center px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                <svg class="w-4 h-4 mr-3 text-secondary-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+                </svg>
                 Reports
               </a>
-              <a (click)="navigateTo('/attendance')" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+              <a (click)="navigateTo('/attendance')" class="flex items-center px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                <svg class="w-4 h-4 mr-3 text-secondary-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                </svg>
                 Attendance
               </a>
             </div>
@@ -132,13 +182,22 @@
                 <div class="font-medium">{{ getUserDisplayName() }}</div>
                 <div class="text-xs text-secondary-500">{{ user?.email }}</div>
               </div>
-              <a (click)="navigateTo('/profile')" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+              <a (click)="navigateTo('/profile')" class="flex items-center px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                <svg class="w-4 h-4 mr-3 text-secondary-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                </svg>
                 Your Profile
               </a>
-              <a (click)="navigateTo('/settings')" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+              <a (click)="navigateTo('/settings')" class="flex items-center px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                <svg class="w-4 h-4 mr-3 text-secondary-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                </svg>
                 Settings
               </a>
-              <a (click)="onLogout()" class="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+              <a (click)="onLogout()" class="flex items-center px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 cursor-pointer">
+                <svg class="w-4 h-4 mr-3 text-secondary-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path>
+                </svg>
                 Sign out
               </a>
             </div>
@@ -178,28 +237,144 @@
     <!-- Mobile menu -->
     <div class="md:hidden" *ngIf="isMenuOpen">
       <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <!-- Main Navigation Links -->
         <a 
           *ngIf="isAuthenticated"
           (click)="navigateTo('/')"
-          class="text-secondary-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium cursor-pointer"
+          class="text-secondary-300 hover:text-white flex items-center px-3 py-2 rounded-md text-base font-medium cursor-pointer"
         >
+          <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+          </svg>
           Home
         </a>
+        
         <a 
           *ngIf="isAdmin()"
           (click)="navigateTo('/dashboard')"
-          class="text-secondary-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium cursor-pointer"
+          class="text-secondary-300 hover:text-white flex items-center px-3 py-2 rounded-md text-base font-medium cursor-pointer"
         >
+          <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+          </svg>
           Dashboard
         </a>
+        
         <a 
           *ngIf="hasAdminOrLecturerRole()"
           (click)="navigateTo('/courses')"
-          class="text-secondary-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium cursor-pointer"
+          class="text-secondary-300 hover:text-white flex items-center px-3 py-2 rounded-md text-base font-medium cursor-pointer"
         >
+          <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
           Courses
         </a>
-        <!-- Add more mobile menu items as needed -->
+
+        <!-- Management Section (Admin only) -->
+        <div *ngIf="isAdmin()" class="border-t border-secondary-700 pt-4 mt-4">
+          <div class="px-3 py-2 text-xs font-semibold text-secondary-400 uppercase tracking-wider">
+            Management
+          </div>
+          
+          <a (click)="navigateTo('/user-management')" class="text-secondary-300 hover:text-white flex items-center px-3 py-2 rounded-md text-sm font-medium cursor-pointer">
+            <svg class="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+            </svg>
+            User Management
+          </a>
+          
+          <a (click)="navigateTo('/lecturers')" class="text-secondary-300 hover:text-white flex items-center px-3 py-2 rounded-md text-sm font-medium cursor-pointer">
+            <svg class="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+            </svg>
+            Manage Lecturers
+          </a>
+          
+          <a (click)="navigateTo('/students')" class="text-secondary-300 hover:text-white flex items-center px-3 py-2 rounded-md text-sm font-medium cursor-pointer">
+            <svg class="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"></path>
+            </svg>
+            Manage Students
+          </a>
+          
+          <a (click)="navigateTo('/classes')" class="text-secondary-300 hover:text-white flex items-center px-3 py-2 rounded-md text-sm font-medium cursor-pointer">
+            <svg class="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"></path>
+            </svg>
+            Manage Classes
+          </a>
+          
+          <a (click)="navigateTo('/semesters')" class="text-secondary-300 hover:text-white flex items-center px-3 py-2 rounded-md text-sm font-medium cursor-pointer">
+            <svg class="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+            </svg>
+            Manage Semesters
+          </a>
+          
+          <a (click)="navigateTo('/enrollments')" class="text-secondary-300 hover:text-white flex items-center px-3 py-2 rounded-md text-sm font-medium cursor-pointer">
+            <svg class="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"></path>
+            </svg>
+            Manage Enrollments
+          </a>
+          
+          <a (click)="navigateTo('/schedule')" class="text-secondary-300 hover:text-white flex items-center px-3 py-2 rounded-md text-sm font-medium cursor-pointer">
+            <svg class="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+            </svg>
+            Schedule Class
+          </a>
+        </div>
+
+        <!-- Academic Section (Admin & Lecturer) -->
+        <div *ngIf="hasAdminOrLecturerRole()" class="border-t border-secondary-700 pt-4 mt-4">
+          <div class="px-3 py-2 text-xs font-semibold text-secondary-400 uppercase tracking-wider">
+            Academic
+          </div>
+          
+          <a (click)="navigateTo('/reports')" class="text-secondary-300 hover:text-white flex items-center px-3 py-2 rounded-md text-sm font-medium cursor-pointer">
+            <svg class="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+            </svg>
+            Reports
+          </a>
+          
+          <a (click)="navigateTo('/attendance')" class="text-secondary-300 hover:text-white flex items-center px-3 py-2 rounded-md text-sm font-medium cursor-pointer">
+            <svg class="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+            </svg>
+            Attendance
+          </a>
+        </div>
+
+        <!-- User Actions -->
+        <div *ngIf="isAuthenticated" class="border-t border-secondary-700 pt-4 mt-4">
+          <div class="px-3 py-2 text-xs font-semibold text-secondary-400 uppercase tracking-wider">
+            Account
+          </div>
+          
+          <a (click)="navigateTo('/profile')" class="text-secondary-300 hover:text-white flex items-center px-3 py-2 rounded-md text-sm font-medium cursor-pointer">
+            <svg class="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+            </svg>
+            Your Profile
+          </a>
+          
+          <a (click)="navigateTo('/settings')" class="text-secondary-300 hover:text-white flex items-center px-3 py-2 rounded-md text-sm font-medium cursor-pointer">
+            <svg class="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+            </svg>
+            Settings
+          </a>
+          
+          <a (click)="onLogout()" class="text-secondary-300 hover:text-white flex items-center px-3 py-2 rounded-md text-sm font-medium cursor-pointer">
+            <svg class="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path>
+            </svg>
+            Sign out
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -207,7 +382,7 @@
 
 <!-- Click outside to close dropdowns -->
 <div 
-  *ngIf="isUserMenuOpen || isMenuOpen || isManagementMenuOpen" 
+  *ngIf="isUserMenuOpen || isMenuOpen || isManagementMenuOpen || isAcademicMenuOpen" 
   class="fixed inset-0 z-40" 
   (click)="closeMenus()"
 ></div>

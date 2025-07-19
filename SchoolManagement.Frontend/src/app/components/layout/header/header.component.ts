@@ -19,6 +19,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isMenuOpen = false;
   isUserMenuOpen = false;
   isManagementMenuOpen = false;
+  isAcademicMenuOpen = false;
   
   private authSubscription: Subscription | undefined;
 
@@ -48,17 +49,26 @@ export class HeaderComponent implements OnInit, OnDestroy {
   toggleUserMenu(): void {
     this.isUserMenuOpen = !this.isUserMenuOpen;
     this.isManagementMenuOpen = false; // Close management menu when opening user menu
+    this.isAcademicMenuOpen = false; // Close academic menu when opening user menu
   }
 
   toggleManagementMenu(): void {
     this.isManagementMenuOpen = !this.isManagementMenuOpen;
     this.isUserMenuOpen = false; // Close user menu when opening management menu
+    this.isAcademicMenuOpen = false; // Close academic menu when opening management menu
+  }
+
+  toggleAcademicMenu(): void {
+    this.isAcademicMenuOpen = !this.isAcademicMenuOpen;
+    this.isUserMenuOpen = false; // Close user menu when opening academic menu
+    this.isManagementMenuOpen = false; // Close management menu when opening academic menu
   }
 
   closeMenus(): void {
     this.isMenuOpen = false;
     this.isUserMenuOpen = false;
     this.isManagementMenuOpen = false;
+    this.isAcademicMenuOpen = false;
   }
 
   onLogout(): void {

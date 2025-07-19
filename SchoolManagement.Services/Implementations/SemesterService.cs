@@ -28,6 +28,8 @@ namespace SchoolManagement.Services.Implementations
 
         public async Task<SemesterDto> CreateSemesterAsync(CreateSemesterDto createSemesterDto)
         {
+            ValidateSemesterDates(createSemesterDto.StartDate, createSemesterDto.EndDate);
+            
             var semester = MapToEntity(createSemesterDto);
             var createdSemester = await _semesterRepository.AddAsync(semester);
             return MapToDto(createdSemester);
@@ -35,6 +37,8 @@ namespace SchoolManagement.Services.Implementations
 
         public async Task<SemesterDto> UpdateSemesterAsync(UpdateSemesterDto updateSemesterDto)
         {
+            ValidateSemesterDates(updateSemesterDto.StartDate, updateSemesterDto.EndDate);
+            
             var semester = MapToEntity(updateSemesterDto);
             await _semesterRepository.UpdateAsync(semester);
             return MapToDto(semester);
@@ -53,6 +57,14 @@ namespace SchoolManagement.Services.Implementations
         public async Task<bool> SemesterExistsAsync(int id)
         {
             return await _semesterRepository.ExistsAsync(id);
+        }
+
+        private static void ValidateSemesterDates(DateTime startDate, DateTime endDate)
+        {
+            if (startDate >= endDate)
+            {
+                throw new ArgumentException("Start date must be before the end date.");
+            }
         }
 
         private static SemesterDto MapToDto(Semester semester)
