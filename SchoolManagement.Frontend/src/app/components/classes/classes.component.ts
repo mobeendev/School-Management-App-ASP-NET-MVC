@@ -7,6 +7,7 @@ import { SemesterService } from '../../services/semester.service';
 import { ClassDto, CreateClassDto, UpdateClassDto } from '../../models/class.model';
 import { CourseDto } from '../../models/course.model';
 import { SemesterDto, SemesterType } from '../../models/semester.model';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-classes',
@@ -247,7 +248,8 @@ export class ClassesComponent implements OnInit {
   constructor(
     private classService: ClassService,
     private courseService: CourseService,
-    private semesterService: SemesterService
+    private semesterService: SemesterService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -262,7 +264,7 @@ export class ClassesComponent implements OnInit {
       this.classes = await this.classService.getAllClasses();
     } catch (error) {
       console.error('Error loading classes:', error);
-      alert('Failed to load classes. Please try again.');
+      this.notificationService.showLoadError('classes');
     } finally {
       this.isLoading = false;
     }
@@ -315,17 +317,17 @@ export class ClassesComponent implements OnInit {
 
       if (this.isEditMode) {
         await this.classService.updateClass(this.classFormData as UpdateClassDto);
-        alert('Class updated successfully!');
+        this.notificationService.showUpdateSuccess('Class');
       } else {
         await this.classService.createClass(this.classFormData as CreateClassDto);
-        alert('Class created successfully!');
+        this.notificationService.showCreateSuccess('Class');
       }
 
       await this.loadClasses();
       this.closeClassModal();
     } catch (error) {
       console.error('Error saving class:', error);
-      alert('Failed to save class. Please try again.');
+      this.notificationService.showSaveError('class');
     } finally {
       this.isLoading = false;
     }
@@ -337,10 +339,10 @@ export class ClassesComponent implements OnInit {
         this.isLoading = true;
         await this.classService.deleteClass(id);
         await this.loadClasses();
-        alert('Class deleted successfully!');
+        this.notificationService.showDeleteSuccess('Class');
       } catch (error) {
         console.error('Error deleting class:', error);
-        alert('Failed to delete class. Please try again.');
+        this.notificationService.showDeleteError('class');
       } finally {
         this.isLoading = false;
       }

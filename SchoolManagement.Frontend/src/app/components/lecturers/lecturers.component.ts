@@ -6,6 +6,7 @@ import { LecturerDto, CreateLecturerDto } from '../../models/lecturer.model';
 import { Qualification } from '../../models/enums';
 import { UserManagementService } from '../../services/user-management.service';
 import { UserByRoleDto } from '../../models/user-management.model';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-lecturers',
@@ -333,7 +334,8 @@ export class LecturersComponent implements OnInit {
 
   constructor(
     private lecturerService: LecturerService,
-    private userManagementService: UserManagementService
+    private userManagementService: UserManagementService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -347,7 +349,7 @@ export class LecturersComponent implements OnInit {
       this.lecturers = await this.lecturerService.getAllLecturers();
     } catch (error) {
       console.error('Error loading lecturers:', error);
-      alert('Failed to load lecturers. Please try again.');
+      this.notificationService.showLoadError('lecturers');
     } finally {
       this.isLoading = false;
     }
@@ -358,7 +360,7 @@ export class LecturersComponent implements OnInit {
       this.availableUsers = await this.userManagementService.getUsersByRole('Lecturer');
     } catch (error) {
       console.error('Error loading available users:', error);
-      alert('Failed to load available users. Please try again.');
+      this.notificationService.showLoadError('available users');
     }
   }
 
@@ -401,11 +403,11 @@ export class LecturersComponent implements OnInit {
         // Refresh the lecturer list
         await this.loadLecturers();
         
-        alert('Lecturer added successfully!');
+        this.notificationService.showCreateSuccess('Lecturer');
         this.closeAddLecturerModal();
       } catch (error) {
         console.error('Error creating lecturer:', error);
-        alert('Failed to create lecturer. Please try again.');
+        this.notificationService.showSaveError('lecturer');
       } finally {
         this.isLoading = false;
       }
@@ -423,10 +425,10 @@ export class LecturersComponent implements OnInit {
         this.isLoading = true;
         await this.lecturerService.deleteLecturer(id);
         await this.loadLecturers();
-        alert('Lecturer deleted successfully!');
+        this.notificationService.showDeleteSuccess('Lecturer');
       } catch (error) {
         console.error('Error deleting lecturer:', error);
-        alert('Failed to delete lecturer. Please try again.');
+        this.notificationService.showDeleteError('lecturer');
       } finally {
         this.isLoading = false;
       }

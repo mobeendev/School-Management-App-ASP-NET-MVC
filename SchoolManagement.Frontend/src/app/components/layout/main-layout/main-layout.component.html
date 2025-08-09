@@ -9,4 +9,26 @@
   
   <!-- Footer -->
   <app-footer *ngIf="showHeaderFooter"></app-footer>
+
+  <!-- Success Modal -->
+  <app-success-modal
+    *ngIf="successModalData"
+    [isVisible]="!!successModalData"
+    [title]="successModalData.title || ''"
+    [message]="successModalData.message || ''"
+    [buttonText]="successModalData.buttonText || 'OK'"
+    (close)="onModalClose()"
+    (confirm)="onModalConfirm()">
+  </app-success-modal>
+
+  <!-- Error Modal -->
+  <app-error-modal
+    *ngIf="errorModalData"
+    [isVisible]="!!errorModalData"
+    [title]="errorModalData.title || ''"
+    [message]="errorModalData.message || ''"
+    [buttonText]="errorModalData.buttonText || 'OK'"
+    (close)="onErrorModalClose()"
+    (confirm)="onErrorModalConfirm()">
+  </app-error-modal>
 </div>

@@ -1,0 +1,43 @@
+/* Error Modal Styles - Using Tailwind Utilities with Enhanced Accessibility */
+
+/* Modal animations using Tailwind utilities */
+.modal-enter {
+  @apply opacity-0 scale-95 translate-y-4 transition-all duration-300 ease-out;
+}
+
+.modal-enter.show {
+  @apply opacity-100 scale-100 translate-y-0;
+}
+
+.modal-leave {
+  @apply opacity-100 scale-100 translate-y-0 transition-all duration-300 ease-in;
+}
+
+.modal-leave.hide {
+  @apply opacity-0 scale-95 translate-y-4;
+}
+
+/* Enhanced focus styles for accessibility */
+.modal-button:focus {
+  @apply ring-2 ring-error-500 ring-offset-2 outline-none;
+}
+
+/* Responsive modal content using Tailwind utilities */
+.modal-content {
+  @apply m-4 sm:m-0;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .modal-overlay {
+    @apply bg-black/80;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .modal-enter,
+  .modal-leave {
+    @apply duration-75;
+  }
+}

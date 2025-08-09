@@ -5,6 +5,7 @@ import { StudentService } from '../../services/student.service';
 import { ErrorHandlerService } from '../../services/error-handler.service';
 import { StudentDto, CreateStudentDto, UpdateStudentDto } from '../../models/student.model';
 import { ErrorDisplayComponent } from '../shared/error-display/error-display.component';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-students',
@@ -271,7 +272,8 @@ export class StudentsComponent implements OnInit {
 
   constructor(
     private studentService: StudentService,
-    private errorHandler: ErrorHandlerService
+    private errorHandler: ErrorHandlerService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -284,7 +286,7 @@ export class StudentsComponent implements OnInit {
       this.students = await this.studentService.getAllStudents();
     } catch (error) {
       console.error('Error loading students:', error);
-      alert('Failed to load students. Please try again.');
+      this.notificationService.showLoadError('students');
     } finally {
       this.isLoading = false;
     }
@@ -330,7 +332,7 @@ export class StudentsComponent implements OnInit {
           dateOfBirth: new Date(this.studentFormData.dateOfBirth)
         };
         await this.studentService.updateStudent(updateData);
-        alert('Student updated successfully!');
+        this.notificationService.showUpdateSuccess('Student');
       } else {
         const createData: CreateStudentDto = {
           firstName: this.studentFormData.firstName,
@@ -343,7 +345,7 @@ export class StudentsComponent implements OnInit {
         console.log('Adding student:', createData);
         const createdStudent = await this.studentService.createStudent(createData);
         console.log('Student created successfully:', createdStudent);
-        alert('Student added successfully!');
+        this.notificationService.showCreateSuccess('Student');
       }
 
       await this.loadStudents();
@@ -362,10 +364,10 @@ export class StudentsComponent implements OnInit {
         this.isLoading = true;
         await this.studentService.deleteStudent(id);
         await this.loadStudents();
-        alert('Student deleted successfully!');
+        this.notificationService.showDeleteSuccess('Student');
       } catch (error) {
         console.error('Error deleting student:', error);
-        alert('Failed to delete student. Please try again.');
+        this.notificationService.showDeleteError('student');
       } finally {
         this.isLoading = false;
       }

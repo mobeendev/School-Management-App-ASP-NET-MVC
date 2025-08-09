@@ -1,60 +1,46 @@
-/* Home Component Styles */
+/* Home Component Styles - Using Tailwind Utilities */
+
+/* Hero section with gradient background */
 .hero-section {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  @apply bg-gradient-to-br from-indigo-500 to-purple-600;
 }
 
+/* Feature cards with enhanced hover effects */
 .feature-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  @apply transition-all duration-300 ease-in-out;
 }
 
 .feature-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  @apply -translate-y-1 shadow-xl shadow-black/10;
 }
 
+/* Feature icon hover effects */
 .feature-icon {
-  transition: transform 0.3s ease;
+  @apply transition-transform duration-300 ease-in-out;
 }
 
 .feature-card:hover .feature-icon {
-  transform: scale(1.1);
+  @apply scale-110;
 }
 
-/* Animation for feature cards */
+/* Enhanced animation for feature cards using Tailwind utilities */
 .feature-card {
-  animation: fadeInUp 0.6s ease-out;
+  @apply opacity-0 translate-y-4 animate-pulse duration-500 ease-out;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Animation keyframes for card appearance */
+.feature-card.animate-appear {
+  @apply opacity-100 translate-y-0 transition-all duration-500 ease-out;
 }
 
-/* Staggered animation for cards */
-.feature-card:nth-child(1) { animation-delay: 0.1s; }
-.feature-card:nth-child(2) { animation-delay: 0.2s; }
-.feature-card:nth-child(3) { animation-delay: 0.3s; }
-.feature-card:nth-child(4) { animation-delay: 0.4s; }
-.feature-card:nth-child(5) { animation-delay: 0.5s; }
-.feature-card:nth-child(6) { animation-delay: 0.6s; }
+/* Staggered animation delays using Tailwind utilities */
+.feature-card:nth-child(1) { @apply delay-100; }
+.feature-card:nth-child(2) { @apply delay-200; }
+.feature-card:nth-child(3) { @apply delay-300; }
+.feature-card:nth-child(4) { @apply delay-[400ms]; }
+.feature-card:nth-child(5) { @apply delay-500; }
+.feature-card:nth-child(6) { @apply delay-[600ms]; }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .hero-section h1 {
-    font-size: 2.5rem;
-  }
-  
-  .hero-section p {
-    font-size: 1.125rem;
-  }
-  
-  .feature-grid {
-    grid-template-columns: 1fr;
-  }
-}
+/* Responsive adjustments using Tailwind responsive prefixes */
+/* Note: These are now handled directly in the HTML template with Tailwind responsive classes */
+/* Example: text-4xl md:text-6xl, text-xl md:text-2xl, grid md:grid-cols-2 lg:grid-cols-3 */

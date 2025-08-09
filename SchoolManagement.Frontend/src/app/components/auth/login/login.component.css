@@ -1,22 +1,19 @@
-/* Login Component Styles */
+/* Login Component Styles - Using Tailwind Utilities */
+
+/* Login container with gradient background */
 .login-container {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  @apply bg-gradient-to-br from-indigo-500 to-purple-600;
 }
 
+/* Enhanced card shadow using Tailwind utilities */
 .login-card {
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  @apply shadow-2xl shadow-black/10;
 }
 
+/* Form input focus enhancement */
 .form-input:focus {
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  @apply ring-2 ring-blue-500/20;
 }
 
-/* Loading spinner animation */
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
+/* Note: Tailwind's animate-spin utility replaces the custom keyframes */
+/* The animate-spin class is now handled by Tailwind CSS automatically */

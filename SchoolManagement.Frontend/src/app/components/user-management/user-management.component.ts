@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserManagementService } from '../../services/user-management.service';
+import { NotificationService } from '../../services/notification.service';
 import { 
   UserManagementDto, 
   CreateUserDto, 
@@ -441,7 +442,10 @@ export class UserManagementComponent implements OnInit {
     isActive: true
   };
 
-  constructor(public userManagementService: UserManagementService) {}
+  constructor(
+    public userManagementService: UserManagementService,
+    private notificationService: NotificationService
+  ) {}
 
   ngOnInit(): void {
     this.loadUsers();
@@ -454,7 +458,7 @@ export class UserManagementComponent implements OnInit {
       this.applyFilters();
     } catch (error) {
       console.error('Error loading users:', error);
-      alert('Failed to load users. Please try again.');
+      this.notificationService.showLoadError('users');
     } finally {
       this.isLoading = false;
     }
@@ -514,7 +518,7 @@ export class UserManagementComponent implements OnInit {
 
     // Validate passwords match for create mode
     if (!this.isEditMode && this.userFormData.password !== this.userFormData.confirmPassword) {
-      alert('Passwords do not match');
+      this.notificationService.showValidationError('Passwords do not match');
       return;
     }
 
@@ -523,17 +527,17 @@ export class UserManagementComponent implements OnInit {
 
       if (this.isEditMode) {
         await this.userManagementService.updateUser(this.userFormData as UpdateUserDto);
-        alert('User updated successfully!');
+        this.notificationService.showUpdateSuccess('User');
       } else {
         await this.userManagementService.createUser(this.userFormData as CreateUserDto);
-        alert('User created successfully!');
+        this.notificationService.showCreateSuccess('User');
       }
 
       await this.loadUsers();
       this.closeUserModal();
     } catch (error) {
       console.error('Error saving user:', error);
-      alert('Failed to save user. Please try again.');
+      this.notificationService.showSaveError('user');
     } finally {
       this.isLoading = false;
     }
@@ -545,10 +549,10 @@ export class UserManagementComponent implements OnInit {
         this.isLoading = true;
         await this.userManagementService.setUserActiveStatus(user.id, !user.isActive);
         await this.loadUsers();
-        alert(`User ${user.isActive ? 'deactivated' : 'activated'} successfully!`);
+        this.notificationService.showUpdateSuccess(`User ${user.isActive ? 'deactivated' : 'activated'}`);
       } catch (error) {
         console.error('Error updating user status:', error);
-        alert('Failed to update user status. Please try again.');
+        this.notificationService.showSaveError('user status');
       } finally {
         this.isLoading = false;
       }
@@ -561,10 +565,10 @@ export class UserManagementComponent implements OnInit {
         this.isLoading = true;
         await this.userManagementService.deleteUser(user.id);
         await this.loadUsers();
-        alert('User deleted successfully!');
+        this.notificationService.showDeleteSuccess('User');
       } catch (error) {
         console.error('Error deleting user:', error);
-        alert('Failed to delete user. Please try again.');
+        this.notificationService.showDeleteError('user');
       } finally {
         this.isLoading = false;
       }

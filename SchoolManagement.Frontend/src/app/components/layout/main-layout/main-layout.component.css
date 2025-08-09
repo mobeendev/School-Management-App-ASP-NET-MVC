@@ -1,50 +1,27 @@
-/* Main Layout Component Styles */
-.main-layout {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
+/* Main Layout Component Styles - Using Tailwind Utilities */
 
-.main-content {
-  flex: 1;
-  padding: 0;
-}
-
-/* Ensure proper spacing between header and content */
+/* Custom utility class for content wrapper with responsive spacing */
 .content-wrapper {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+  @apply py-8 md:py-8 sm:py-4;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .content-wrapper {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-  }
-}
-
-/* Page transitions */
+/* Page transition utilities - can be applied directly in templates */
 .page-transition {
-  transition: all 0.3s ease-in-out;
+  @apply transition-all duration-300 ease-in-out;
 }
 
 .page-enter {
-  opacity: 0;
-  transform: translateY(20px);
+  @apply opacity-0 translate-y-5;
 }
 
 .page-enter-active {
-  opacity: 1;
-  transform: translateY(0);
+  @apply opacity-100 translate-y-0;
 }
 
 .page-exit {
-  opacity: 1;
-  transform: translateY(0);
+  @apply opacity-100 translate-y-0;
 }
 
 .page-exit-active {
-  opacity: 0;
-  transform: translateY(-20px);
+  @apply opacity-0 -translate-y-5;
 }

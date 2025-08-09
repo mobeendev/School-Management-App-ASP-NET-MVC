@@ -5,6 +5,7 @@ import { CourseService } from '../../services/course.service';
 import { ErrorHandlerService } from '../../services/error-handler.service';
 import { CourseDto, CreateCourseDto, UpdateCourseDto } from '../../models/course.model';
 import { ErrorDisplayComponent } from '../shared/error-display/error-display.component';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-courses',
@@ -243,7 +244,8 @@ export class CoursesComponent implements OnInit {
 
   constructor(
     private courseService: CourseService,
-    private errorHandler: ErrorHandlerService
+    private errorHandler: ErrorHandlerService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -256,7 +258,7 @@ export class CoursesComponent implements OnInit {
       this.courses = await this.courseService.getAllCourses();
     } catch (error) {
       console.error('Error loading courses:', error);
-      alert('Failed to load courses. Please try again.');
+      this.notificationService.showLoadError('courses');
     } finally {
       this.isLoading = false;
     }
@@ -296,10 +298,10 @@ export class CoursesComponent implements OnInit {
 
       if (this.isEditMode) {
         await this.courseService.updateCourse(this.courseFormData as UpdateCourseDto);
-        alert('Course updated successfully!');
+        this.notificationService.showUpdateSuccess('Course');
       } else {
         await this.courseService.createCourse(this.courseFormData as CreateCourseDto);
-        alert('Course created successfully!');
+        this.notificationService.showCreateSuccess('Course');
       }
 
       await this.loadCourses();
@@ -318,10 +320,10 @@ export class CoursesComponent implements OnInit {
         this.isLoading = true;
         await this.courseService.deleteCourse(id);
         await this.loadCourses();
-        alert('Course deleted successfully!');
+        this.notificationService.showDeleteSuccess('Course');
       } catch (error) {
         console.error('Error deleting course:', error);
-        alert('Failed to delete course. Please try again.');
+        this.notificationService.showDeleteError('course');
       } finally {
         this.isLoading = false;
       }
