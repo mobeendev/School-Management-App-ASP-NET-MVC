@@ -100,4 +100,26 @@ export class NotificationService {
       message
     );
   }
+
+  // Method specifically for server validation errors that might contain multiple messages
+  showServerError(error: any) {
+    let title = 'Validation Error';
+    let message = 'Please check your input and try again.';
+
+    // Handle the specific format from your server error
+    if (error && typeof error === 'string' && error.includes('Failed to create user:')) {
+      const errorParts = error.split('Failed to create user: ');
+      if (errorParts.length > 1) {
+        title = 'Password Requirements Not Met';
+        message = errorParts[1].replace(/\., /g, '\n• ').replace(/\.$/, '');
+        message = '• ' + message;
+      }
+    } else if (error && error.message) {
+      message = error.message;
+    } else if (typeof error === 'string') {
+      message = error;
+    }
+
+    this.showError(title, message);
+  }
 }

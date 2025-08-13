@@ -117,5 +117,34 @@
         </form>
       </div>
     </div>
+
+    <!-- Test Users Section -->
+    <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div class="flex items-center mb-2">
+        <svg class="h-5 w-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+        </svg>
+        <h3 class="text-sm font-medium text-blue-800">Test Account</h3>
+      </div>
+      <p class="text-xs text-blue-700 mb-3">Use this default account for testing:</p>
+      
+      <div class="bg-white rounded-md p-3 border border-blue-200">
+        <div class="flex items-center justify-between">
+          <div class="flex-1">
+            <div class="text-xs text-gray-600 mb-1">Admin Account</div>
+            <div class="text-sm font-mono text-gray-800">admin&#64;school.com</div>
+            <div class="text-sm font-mono text-gray-800">Admin&#64;123!</div>
+            <div class="text-xs text-blue-600 mt-1">Role: Administrator</div>
+          </div>
+          <button
+            type="button"
+            class="ml-3 bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-2 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            (click)="fillTestCredentials('admin@school.com', 'Admin@123!')"
+          >
+            Use
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

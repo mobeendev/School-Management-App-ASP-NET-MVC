@@ -35,7 +35,12 @@
         <!-- Content -->
         <div class="text-center">
           <h3 class="text-xl font-semibold text-gray-900 mb-3">{{ title }}</h3>
-          <p class="text-gray-600 text-base leading-relaxed mb-6">{{ message }}</p>
+          <div class="text-gray-600 text-base leading-relaxed mb-6">
+            <p *ngIf="!hasMultilineMessage" class="whitespace-pre-line">{{ message }}</p>
+            <div *ngIf="hasMultilineMessage" class="text-left bg-gray-50 rounded-lg p-4">
+              <pre class="whitespace-pre-line font-sans text-sm">{{ message }}</pre>
+            </div>
+          </div>
         </div>
 
         <!-- Action Button -->

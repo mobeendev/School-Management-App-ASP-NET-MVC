@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserManagementService } from '../../services/user-management.service';
 import { NotificationService } from '../../services/notification.service';
+import { ErrorHandlerService } from '../../services/error-handler.service';
 import { 
   UserManagementDto, 
   CreateUserDto, 
@@ -444,7 +445,8 @@ export class UserManagementComponent implements OnInit {
 
   constructor(
     public userManagementService: UserManagementService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private errorHandler: ErrorHandlerService
   ) {}
 
   ngOnInit(): void {
@@ -458,7 +460,8 @@ export class UserManagementComponent implements OnInit {
       this.applyFilters();
     } catch (error) {
       console.error('Error loading users:', error);
-      this.notificationService.showLoadError('users');
+      const errorMessage = this.errorHandler.extractErrorMessage(error);
+      this.notificationService.showError('Load Failed', errorMessage);
     } finally {
       this.isLoading = false;
     }
@@ -537,7 +540,9 @@ export class UserManagementComponent implements OnInit {
       this.closeUserModal();
     } catch (error) {
       console.error('Error saving user:', error);
-      this.notificationService.showSaveError('user');
+      const errorMessage = this.errorHandler.extractErrorMessage(error);
+      // Use the special server error handler for better formatting of validation errors
+      this.notificationService.showServerError(errorMessage);
     } finally {
       this.isLoading = false;
     }
@@ -552,7 +557,8 @@ export class UserManagementComponent implements OnInit {
         this.notificationService.showUpdateSuccess(`User ${user.isActive ? 'deactivated' : 'activated'}`);
       } catch (error) {
         console.error('Error updating user status:', error);
-        this.notificationService.showSaveError('user status');
+        const errorMessage = this.errorHandler.extractErrorMessage(error);
+        this.notificationService.showError('Status Update Failed', errorMessage);
       } finally {
         this.isLoading = false;
       }
@@ -568,7 +574,8 @@ export class UserManagementComponent implements OnInit {
         this.notificationService.showDeleteSuccess('User');
       } catch (error) {
         console.error('Error deleting user:', error);
-        this.notificationService.showDeleteError('user');
+        const errorMessage = this.errorHandler.extractErrorMessage(error);
+        this.notificationService.showError('Delete Failed', errorMessage);
       } finally {
         this.isLoading = false;
       }

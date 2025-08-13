@@ -16,6 +16,10 @@ export class ErrorModalComponent {
   @Output() close = new EventEmitter<void>();
   @Output() confirm = new EventEmitter<void>();
 
+  get hasMultilineMessage(): boolean {
+    return this.message.includes('\n') || this.message.includes('•');
+  }
+
   onClose() {
     this.close.emit();
   }

@@ -57,4 +57,10 @@ export class LoginComponent {
   onRegisterClick(): void {
     this.router.navigate(['/register']);
   }
+
+  fillTestCredentials(email: string, password: string): void {
+    this.loginData.email = email;
+    this.loginData.password = password;
+    this.errorMessage = '';
+  }
 }
