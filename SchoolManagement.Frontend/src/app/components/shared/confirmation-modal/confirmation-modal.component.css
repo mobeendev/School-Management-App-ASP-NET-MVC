@@ -1,0 +1,39 @@
+/* Component-specific styles for confirmation modal */
+/* Most styling is handled by Tailwind CSS classes in the template */
+
+/* Animation enhancements */
+.modal-enter {
+  animation: modalEnter 0.3s ease-out;
+}
+
+.modal-leave {
+  animation: modalLeave 0.3s ease-in;
+}
+
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes modalLeave {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9) translateY(-10px);
+  }
+}
+
+/* Ensure proper focus styling */
+button:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}

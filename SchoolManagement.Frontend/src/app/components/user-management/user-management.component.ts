@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { UserManagementService } from '../../services/user-management.service';
 import { NotificationService } from '../../services/notification.service';
 import { ErrorHandlerService } from '../../services/error-handler.service';
+import { ConfirmationModalComponent, ConfirmationModalConfig } from '../shared/confirmation-modal/confirmation-modal.component';
 import { 
   UserManagementDto, 
   CreateUserDto, 
@@ -16,7 +17,7 @@ import {
 @Component({
   selector: 'app-user-management',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ConfirmationModalComponent],
   template: `
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Header -->
@@ -412,6 +413,14 @@ import {
           </div>
         </div>
       </div>
+
+      <!-- Confirmation Modal -->
+      <app-confirmation-modal
+        [isVisible]="showConfirmationModal"
+        [config]="confirmationConfig"
+        (confirm)="onConfirmAction()"
+        (cancel)="onCancelAction()"
+      ></app-confirmation-modal>
     </div>
   `,
   styles: []
@@ -424,6 +433,17 @@ export class UserManagementComponent implements OnInit {
   isEditMode = false;
   selectedRoleFilter = '';
   searchTerm = '';
+
+  // Confirmation modal properties
+  showConfirmationModal = false;
+  confirmationConfig: ConfirmationModalConfig = {
+    title: '',
+    message: '',
+    confirmText: 'Confirm',
+    cancelText: 'Cancel',
+    variant: 'warning'
+  };
+  pendingAction: (() => void) | null = null;
 
   userRoles = USER_ROLES;
   genderOptions = GENDER_OPTIONS;
@@ -549,12 +569,23 @@ export class UserManagementComponent implements OnInit {
   }
 
   async toggleUserStatus(user: UserManagementDto): Promise<void> {
-    if (confirm(`Are you sure you want to ${user.isActive ? 'deactivate' : 'activate'} this user?`)) {
+    const action = user.isActive ? 'deactivate' : 'activate';
+    const actionPast = user.isActive ? 'deactivated' : 'activated';
+    
+    this.confirmationConfig = {
+      title: `${action.charAt(0).toUpperCase() + action.slice(1)} User`,
+      message: `Are you sure you want to ${action} ${user.displayName}?\n\nEmail: ${user.email}\nRole: ${user.primaryRole}\n\n${user.isActive ? 'This user will no longer be able to access the system.' : 'This user will regain access to the system.'}`,
+      confirmText: action.charAt(0).toUpperCase() + action.slice(1),
+      cancelText: 'Cancel',
+      variant: user.isActive ? 'warning' : 'info'
+    };
+
+    this.pendingAction = async () => {
       try {
         this.isLoading = true;
         await this.userManagementService.setUserActiveStatus(user.id, !user.isActive);
         await this.loadUsers();
-        this.notificationService.showUpdateSuccess(`User ${user.isActive ? 'deactivated' : 'activated'}`);
+        this.notificationService.showUpdateSuccess(`User ${actionPast}`);
       } catch (error) {
         console.error('Error updating user status:', error);
         const errorMessage = this.errorHandler.extractErrorMessage(error);
@@ -562,11 +593,21 @@ export class UserManagementComponent implements OnInit {
       } finally {
         this.isLoading = false;
       }
-    }
+    };
+
+    this.showConfirmationModal = true;
   }
 
   async deleteUser(user: UserManagementDto): Promise<void> {
-    if (confirm(`Are you sure you want to permanently delete ${user.displayName}? This action cannot be undone.`)) {
+    this.confirmationConfig = {
+      title: 'Delete User',
+      message: `Are you sure you want to permanently delete ${user.displayName}?\n\nEmail: ${user.email}\nRole: ${user.primaryRole}\n\nThis action cannot be undone.`,
+      confirmText: 'Delete Permanently',
+      cancelText: 'Cancel',
+      variant: 'danger'
+    };
+
+    this.pendingAction = async () => {
       try {
         this.isLoading = true;
         await this.userManagementService.deleteUser(user.id);
@@ -579,7 +620,22 @@ export class UserManagementComponent implements OnInit {
       } finally {
         this.isLoading = false;
       }
+    };
+
+    this.showConfirmationModal = true;
+  }
+
+  onConfirmAction(): void {
+    if (this.pendingAction) {
+      this.pendingAction();
+      this.pendingAction = null;
     }
+    this.showConfirmationModal = false;
+  }
+
+  onCancelAction(): void {
+    this.pendingAction = null;
+    this.showConfirmationModal = false;
   }
 
   private resetForm(): void {
