@@ -5,15 +5,17 @@ import { EnrollmentService } from '../../services/enrollment.service';
 import { StudentService } from '../../services/student.service';
 import { ClassService } from '../../services/class.service';
 import { SemesterService } from '../../services/semester.service';
+import { NotificationService } from '../../services/notification.service';
 import { EnrollmentDto, CreateEnrollmentDto, UpdateEnrollmentDto } from '../../models/enrollment.model';
 import { StudentDto } from '../../models/student.model';
 import { ClassDto } from '../../models/class.model';
 import { SemesterDto } from '../../models/semester.model';
+import { ConfirmationModalComponent, ConfirmationModalConfig } from '../shared/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-enrollments',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ConfirmationModalComponent],
   template: `
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="flex justify-between items-center mb-6">
@@ -77,7 +79,7 @@ import { SemesterDto } from '../../models/semester.model';
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-sm text-secondary-600">Semester:</span>
-                <span class="text-sm font-medium text-secondary-900">{{ enrollment.semesterName || 'Semester ID: ' + enrollment.semesterId }}</span>
+                <span class="text-sm font-medium text-secondary-900">{{ enrollment.semesterType || 'Semester ID: ' + enrollment.semesterId }}</span>
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-sm text-secondary-600">Student:</span>
@@ -95,7 +97,7 @@ import { SemesterDto } from '../../models/semester.model';
                 Edit
               </button>
               <button 
-                (click)="deleteEnrollment(enrollment.id)"
+                (click)="showDeleteConfirmation(enrollment.id)"
                 class="flex-1 text-sm px-3 py-1 border border-error-300 text-error-700 rounded hover:bg-error-50 transition-colors"
                 [disabled]="isLoading"
               >
@@ -231,6 +233,14 @@ import { SemesterDto } from '../../models/semester.model';
         </div>
       </div>
     </div>
+
+    <!-- Confirmation Modal -->
+    <app-confirmation-modal
+      [isVisible]="showConfirmationModal"
+      [config]="confirmationConfig"
+      (confirm)="onConfirmDelete()"
+      (cancel)="onCancelDelete()"
+    ></app-confirmation-modal>
   `,
   styles: []
 })
@@ -242,6 +252,8 @@ export class EnrollmentsComponent implements OnInit {
   isLoading = false;
   showEnrollmentModal = false;
   isEditMode = false;
+  showConfirmationModal = false;
+  enrollmentToDelete: number | null = null;
   
   enrollmentFormData: CreateEnrollmentDto & UpdateEnrollmentDto = {
     id: 0,
@@ -251,11 +263,21 @@ export class EnrollmentsComponent implements OnInit {
     grade: ''
   };
 
+  confirmationConfig: ConfirmationModalConfig = {
+    title: 'Delete Enrollment',
+    message: 'Are you sure you want to permanently delete this enrollment?',
+    details: '',
+    confirmText: 'Delete Permanently',
+    cancelText: 'Cancel',
+    variant: 'danger'
+  };
+
   constructor(
     private enrollmentService: EnrollmentService,
     private studentService: StudentService,
     private classService: ClassService,
-    private semesterService: SemesterService
+    private semesterService: SemesterService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -271,7 +293,7 @@ export class EnrollmentsComponent implements OnInit {
       this.enrollments = await this.enrollmentService.getAllEnrollments();
     } catch (error) {
       console.error('Error loading enrollments:', error);
-      alert('Failed to load enrollments. Please try again.');
+      this.notificationService.showLoadError('enrollments');
     } finally {
       this.isLoading = false;
     }
@@ -332,19 +354,19 @@ export class EnrollmentsComponent implements OnInit {
 
       if (this.isEditMode) {
         await this.enrollmentService.updateEnrollment(this.enrollmentFormData as UpdateEnrollmentDto);
-        alert('Enrollment updated successfully!');
+        this.notificationService.showUpdateSuccess('Enrollment');
       } else {
         console.log('Adding enrollment:', this.enrollmentFormData);
         const createdEnrollment = await this.enrollmentService.createEnrollment(this.enrollmentFormData as CreateEnrollmentDto);
         console.log('Enrollment created successfully:', createdEnrollment);
-        alert('Enrollment created successfully!');
+        this.notificationService.showCreateSuccess('Enrollment');
       }
 
       await this.loadEnrollments();
       this.closeEnrollmentModal();
     } catch (error) {
       console.error('Error saving enrollment:', error);
-      alert('Failed to save enrollment. Please try again.');
+      this.notificationService.showSaveError('enrollment');
     } finally {
       this.isLoading = false;
     }
@@ -370,19 +392,45 @@ export class EnrollmentsComponent implements OnInit {
     return semesterTypes[type] || 'Unknown';
   }
 
+  showDeleteConfirmation(id: number): void {
+    const enrollment = this.enrollments.find(e => e.id === id);
+    if (enrollment) {
+      this.enrollmentToDelete = id;
+      this.confirmationConfig = {
+        title: 'Delete Enrollment',
+        message: `Are you sure you want to permanently delete this enrollment?`,
+        details: `<strong>Student:</strong> ${enrollment.studentName}<br><strong>Class:</strong> ${enrollment.className}<br><strong>Course:</strong> ${enrollment.courseName}`,
+        confirmText: 'Delete Permanently',
+        cancelText: 'Cancel',
+        variant: 'danger'
+      };
+      this.showConfirmationModal = true;
+    }
+  }
+
+  onConfirmDelete(): void {
+    if (this.enrollmentToDelete) {
+      this.deleteEnrollment(this.enrollmentToDelete);
+    }
+    this.onCancelDelete();
+  }
+
+  onCancelDelete(): void {
+    this.showConfirmationModal = false;
+    this.enrollmentToDelete = null;
+  }
+
   async deleteEnrollment(id: number): Promise<void> {
-    if (confirm('Are you sure you want to delete this enrollment?')) {
-      try {
-        this.isLoading = true;
-        await this.enrollmentService.deleteEnrollment(id);
-        await this.loadEnrollments();
-        alert('Enrollment deleted successfully!');
-      } catch (error) {
-        console.error('Error deleting enrollment:', error);
-        alert('Failed to delete enrollment. Please try again.');
-      } finally {
-        this.isLoading = false;
-      }
+    try {
+      this.isLoading = true;
+      await this.enrollmentService.deleteEnrollment(id);
+      await this.loadEnrollments();
+      this.notificationService.showDeleteSuccess('Enrollment');
+    } catch (error) {
+      console.error('Error deleting enrollment:', error);
+      this.notificationService.showDeleteError('enrollment');
+    } finally {
+      this.isLoading = false;
     }
   }
 }

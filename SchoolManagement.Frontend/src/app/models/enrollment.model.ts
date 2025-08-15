@@ -14,12 +14,17 @@ export interface Enrollment {
 export interface EnrollmentDto {
   id: number;
   studentId: number;
+  studentName: string;
+  studentEmail: string;
   classId: number;
+  className: string;
+  courseCode: string;
+  courseName: string;
   semesterId: number;
+  semesterType: string;
+  semesterStartDate: Date;
+  semesterEndDate: Date;
   grade?: string;
-  studentName?: string;
-  className?: string;
-  semesterName?: string;
 }
 
 export interface CreateEnrollmentDto {

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using SchoolManagement.Models.Entities;
-using SchoolManagement.Repositories.Interfaces;
+using SchoolManagement.Models.DTOs;
+using SchoolManagement.Services.Interfaces;
 using Asp.Versioning;
 
 namespace SchoolManagement.Api.Controllers
@@ -13,11 +13,11 @@ namespace SchoolManagement.Api.Controllers
     [Produces("application/json")]
     public class EnrollmentsController : ControllerBase
     {
-        private readonly IEnrollmentRepository _enrollmentRepository;
+        private readonly IEnrollmentService _enrollmentService;
 
-        public EnrollmentsController(IEnrollmentRepository enrollmentRepository)
+        public EnrollmentsController(IEnrollmentService enrollmentService)
         {
-            _enrollmentRepository = enrollmentRepository;
+            _enrollmentService = enrollmentService;
         }
 
         /// <summary>
@@ -25,10 +25,10 @@ namespace SchoolManagement.Api.Controllers
         /// </summary>
         /// <returns>List of all enrollments</returns>
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Enrollment>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<EnrollmentDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
         {
-            var enrollments = await _enrollmentRepository.GetAllAsync();
+            var enrollments = await _enrollmentService.GetAllAsync();
             return Ok(enrollments);
         }
 
@@ -38,11 +38,11 @@ namespace SchoolManagement.Api.Controllers
         /// <param name="id">Enrollment ID</param>
         /// <returns>Enrollment details</returns>
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(Enrollment), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(EnrollmentDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(int id)
         {
-            var enrollment = await _enrollmentRepository.GetByIdAsync(id);
+            var enrollment = await _enrollmentService.GetByIdAsync(id);
             if (enrollment == null)
             {
                 return NotFound();
@@ -57,10 +57,10 @@ namespace SchoolManagement.Api.Controllers
         /// <param name="studentId">Student ID</param>
         /// <returns>List of enrollments for the student</returns>
         [HttpGet("student/{studentId}")]
-        [ProducesResponseType(typeof(IEnumerable<Enrollment>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<EnrollmentDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetByStudentId(int studentId)
         {
-            var enrollments = await _enrollmentRepository.GetByStudentIdAsync(studentId);
+            var enrollments = await _enrollmentService.GetByStudentIdAsync(studentId);
             return Ok(enrollments);
         }
 
@@ -70,29 +70,29 @@ namespace SchoolManagement.Api.Controllers
         /// <param name="classId">Class ID</param>
         /// <returns>List of enrollments for the class</returns>
         [HttpGet("class/{classId}")]
-        [ProducesResponseType(typeof(IEnumerable<Enrollment>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<EnrollmentDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetByClassId(int classId)
         {
-            var enrollments = await _enrollmentRepository.GetByClassIdAsync(classId);
+            var enrollments = await _enrollmentService.GetByClassIdAsync(classId);
             return Ok(enrollments);
         }
 
         /// <summary>
         /// Creates a new enrollment
         /// </summary>
-        /// <param name="enrollment">Enrollment data</param>
+        /// <param name="createEnrollmentDto">Enrollment data</param>
         /// <returns>Created enrollment</returns>
         [HttpPost]
-        [ProducesResponseType(typeof(Enrollment), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(EnrollmentDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Create([FromBody] Enrollment enrollment)
+        public async Task<IActionResult> Create([FromBody] CreateEnrollmentDto createEnrollmentDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var createdEnrollment = await _enrollmentRepository.AddAsync(enrollment);
+            var createdEnrollment = await _enrollmentService.CreateAsync(createEnrollmentDto);
             return CreatedAtAction(nameof(GetById), new { id = createdEnrollment.Id }, createdEnrollment);
         }
 
@@ -100,15 +100,15 @@ namespace SchoolManagement.Api.Controllers
         /// Updates an existing enrollment
         /// </summary>
         /// <param name="id">Enrollment ID</param>
-        /// <param name="enrollment">Updated enrollment data</param>
-        /// <returns>No content if successful</returns>
+        /// <param name="updateEnrollmentDto">Updated enrollment data</param>
+        /// <returns>Updated enrollment</returns>
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(EnrollmentDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Update(int id, [FromBody] Enrollment enrollment)
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateEnrollmentDto updateEnrollmentDto)
         {
-            if (id != enrollment.Id)
+            if (id != updateEnrollmentDto.Id)
             {
                 return BadRequest("ID mismatch");
             }
@@ -118,13 +118,15 @@ namespace SchoolManagement.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (!await _enrollmentRepository.ExistsAsync(id))
+            try
+            {
+                var updatedEnrollment = await _enrollmentService.UpdateAsync(updateEnrollmentDto);
+                return Ok(updatedEnrollment);
+            }
+            catch (KeyNotFoundException)
             {
                 return NotFound();
             }
-
-            await _enrollmentRepository.UpdateAsync(enrollment);
-            return NoContent();
         }
 
         /// <summary>
@@ -137,14 +139,15 @@ namespace SchoolManagement.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(int id)
         {
-            var enrollment = await _enrollmentRepository.GetByIdAsync(id);
-            if (enrollment == null)
+            try
+            {
+                await _enrollmentService.DeleteAsync(id);
+                return NoContent();
+            }
+            catch (KeyNotFoundException)
             {
                 return NotFound();
             }
-
-            await _enrollmentRepository.DeleteAsync(enrollment);
-            return NoContent();
         }
     }
 }
