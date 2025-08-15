@@ -172,4 +172,7 @@ app.MapControllers();
 // Seed database with roles and admin user
 await DatabaseSeeder.SeedRolesAndAdminAsync(app.Services);
 
+// Seed database with test data
+await DatabaseSeeder.SeedTestDataAsync(app.Services);
+
 app.Run();
