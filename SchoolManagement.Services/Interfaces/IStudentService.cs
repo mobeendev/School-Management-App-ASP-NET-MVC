@@ -7,9 +7,11 @@ namespace SchoolManagement.Services.Interfaces
     {
         Task<IEnumerable<StudentDto>> GetAllStudentsAsync();
         Task<StudentDto?> GetStudentByIdAsync(int id);
-        Task<StudentDto> CreateStudentAsync(StudentDto studentDto);
-        Task<StudentDto> UpdateStudentAsync(StudentDto studentDto);
+        Task<StudentDto> CreateStudentAsync(CreateStudentDto createStudentDto);
+        Task<StudentDto> CreateStudentWithUserAsync(CreateStudentWithUserDto createStudentWithUserDto);
+        Task<StudentDto> UpdateStudentAsync(UpdateStudentDto updateStudentDto);
         Task<bool> DeleteStudentAsync(int id);
         Task<bool> StudentExistsAsync(int id);
+        Task<bool> StudentExistsByUserIdAsync(string userId);
     }
 }

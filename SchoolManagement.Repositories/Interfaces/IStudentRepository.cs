@@ -10,5 +10,6 @@ namespace SchoolManagement.Repositories.Interfaces
         Task UpdateAsync(Student student);
         Task DeleteAsync(Student student);
         Task<bool> ExistsAsync(int id);
+        Task<bool> ExistsByUserIdAsync(string userId);
     }
 }

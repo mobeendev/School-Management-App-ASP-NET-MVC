@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolManagement.Repositories.Context;
 
@@ -10,9 +11,11 @@ using SchoolManagement.Repositories.Context;
 namespace SchoolManagementApp.Migrations
 {
     [DbContext(typeof(SchoolManagementDbContext))]
-    partial class SchoolManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250815154905_UpdateStudentEntityClean")]
+    partial class UpdateStudentEntityClean
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.1");

@@ -139,6 +139,7 @@ builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
 builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
 builder.Services.AddScoped<ISemesterRepository, SemesterRepository>();
 builder.Services.AddScoped<IClassRepository, ClassRepository>();
+builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
 
 // Register services
 builder.Services.AddScoped<IStudentService, StudentService>();
@@ -147,6 +148,7 @@ builder.Services.AddScoped<ILecturerService, LecturerService>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 builder.Services.AddScoped<ISemesterService, SemesterService>();
 builder.Services.AddScoped<IClassService, ClassService>();
+builder.Services.AddScoped<IScheduleService, ScheduleService>();
 
 var app = builder.Build();
 

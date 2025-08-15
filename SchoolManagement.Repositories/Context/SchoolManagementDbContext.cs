@@ -66,6 +66,18 @@ namespace SchoolManagement.Repositories.Context
                 .HasForeignKey<Lecturer>(l => l.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // One-to-One: Student <-> ApplicationUser
+            modelBuilder.Entity<Student>()
+                .HasOne(s => s.User)
+                .WithOne()
+                .HasForeignKey<Student>(s => s.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Unique constraint: One student per user
+            modelBuilder.Entity<Student>()
+                .HasIndex(s => s.UserId)
+                .IsUnique();
+
             // Rename default Identity tables
             modelBuilder.Entity<ApplicationUser>().ToTable("Users");
             modelBuilder.Entity<IdentityRole>().ToTable("Roles");

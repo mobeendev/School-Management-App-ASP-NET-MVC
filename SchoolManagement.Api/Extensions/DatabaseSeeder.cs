@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using SchoolManagement.Models.Entities;
+using SchoolManagement.Models.Enums;
+using SchoolManagement.Repositories.Context;
 
 namespace SchoolManagement.Api.Extensions
 {

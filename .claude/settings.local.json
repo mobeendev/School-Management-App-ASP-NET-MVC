@@ -19,7 +19,10 @@
       "Bash(sqlite3:*)",
       "Bash(curl:*)",
       "Bash(rg:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(dotnet ef migrations add:*)",
+      "Bash(dotnet ef database:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }

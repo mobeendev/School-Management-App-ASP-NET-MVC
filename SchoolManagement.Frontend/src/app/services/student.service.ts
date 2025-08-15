@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { Student, StudentDto, CreateStudentDto, UpdateStudentDto } from '../models/student.model';
+import { StudentDto, CreateStudentDto, CreateStudentWithUserDto, UpdateStudentDto } from '../models/student.model';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
 
@@ -61,6 +61,20 @@ export class StudentService {
       return response;
     } catch (error) {
       console.error('StudentService - Error creating student:', error);
+      throw error;
+    }
+  }
+
+  async createStudentWithUser(student: CreateStudentWithUserDto): Promise<StudentDto> {
+    try {
+      console.log('StudentService - Creating student with user:', student);
+      const url = `${this.apiUrl}/with-user`;
+      console.log('StudentService - Making POST request to:', url);
+      const response = await firstValueFrom(this.http.post<StudentDto>(url, student, { headers: this.getHeaders() }));
+      console.log('StudentService - Student created with user successfully:', response);
+      return response;
+    } catch (error) {
+      console.error('StudentService - Error creating student with user:', error);
       throw error;
     }
   }

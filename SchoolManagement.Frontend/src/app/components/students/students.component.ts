@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { StudentService } from '../../services/student.service';
 import { ErrorHandlerService } from '../../services/error-handler.service';
-import { StudentDto, CreateStudentDto, UpdateStudentDto } from '../../models/student.model';
+import { StudentDto, CreateStudentDto, CreateStudentWithUserDto, UpdateStudentDto } from '../../models/student.model';
 import { ErrorDisplayComponent } from '../shared/error-display/error-display.component';
 import { NotificationService } from '../../services/notification.service';
 import { ConfirmationModalComponent, ConfirmationModalConfig } from '../shared/confirmation-modal/confirmation-modal.component';
@@ -59,17 +59,17 @@ import { ConfirmationModalComponent, ConfirmationModalConfig } from '../shared/c
             <div class="space-y-3 mb-4">
               <div class="flex justify-between items-center">
                 <span class="text-sm text-secondary-600">Phone:</span>
-                <span class="text-sm font-medium text-secondary-900">{{ student.phoneNumber }}</span>
+                <span class="text-sm font-medium text-secondary-900">{{ student.phoneNumber || 'N/A' }}</span>
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-sm text-secondary-600">Enrolled:</span>
                 <span class="text-sm font-medium text-secondary-900">{{ student.enrollmentDate | date:'shortDate' }}</span>
               </div>
-              <div class="flex justify-between items-center">
+              <div class="flex justify-between items-center" *ngIf="student.dateOfBirth">
                 <span class="text-sm text-secondary-600">Date of Birth:</span>
                 <span class="text-sm font-medium text-secondary-900">{{ student.dateOfBirth | date:'shortDate' }}</span>
               </div>
-              <div class="mt-3">
+              <div class="mt-3" *ngIf="student.address">
                 <span class="text-sm text-secondary-600">Address:</span>
                 <p class="text-sm text-secondary-900 mt-1">{{ student.address }}</p>
               </div>
@@ -130,8 +130,71 @@ import { ConfirmationModalComponent, ConfirmationModalConfig } from '../shared/c
           ></app-error-display>
 
           <form #studentForm="ngForm" (ngSubmit)="onSubmitStudent(studentForm)">
-            <!-- Personal Information -->
+            <!-- Creation Mode Selection (only for new students) -->
+            <div *ngIf="!isEditMode" class="mb-6">
+              <div class="flex space-x-4">
+                <label class="flex items-center">
+                  <input 
+                    type="radio" 
+                    name="creationMode" 
+                    [value]="true" 
+                    [(ngModel)]="isCreateWithUser"
+                    class="mr-2"
+                  >
+                  <span class="text-sm font-medium text-secondary-700">Create new user and student</span>
+                </label>
+                <label class="flex items-center">
+                  <input 
+                    type="radio" 
+                    name="creationMode" 
+                    [value]="false" 
+                    [(ngModel)]="isCreateWithUser"
+                    class="mr-2"
+                  >
+                  <span class="text-sm font-medium text-secondary-700">Link existing user to student</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Student Information -->
             <div class="mb-8">
+              <h3 class="text-lg font-semibold text-secondary-900 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-primary-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                </svg>
+                Student Information
+              </h3>
+              
+              <div class="mt-6">
+                <label class="block text-sm font-medium text-secondary-700 mb-2">Enrollment Date</label>
+                <input 
+                  type="date" 
+                  name="enrollmentDate"
+                  [(ngModel)]="studentFormData.enrollmentDate"
+                  class="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                >
+              </div>
+            </div>
+
+            <!-- User Selection (for linking existing user) -->
+            <div *ngIf="!isEditMode && !isCreateWithUser" class="mb-8">
+              <h3 class="text-lg font-semibold text-secondary-900 mb-4">Select Existing User</h3>
+              <div>
+                <label class="block text-sm font-medium text-secondary-700 mb-2">User ID *</label>
+                <input 
+                  type="text" 
+                  name="userId"
+                  [(ngModel)]="studentFormData.userId"
+                  required
+                  class="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                  placeholder="Enter User ID"
+                >
+                <p class="mt-1 text-xs text-secondary-500">Enter the ID of the existing user to link to this student</p>
+              </div>
+            </div>
+
+            <!-- User Information (for creating new user) -->
+            <div *ngIf="!isEditMode && isCreateWithUser" class="mb-8">
               <h3 class="text-lg font-semibold text-secondary-900 mb-4 flex items-center">
                 <svg class="w-5 h-5 mr-2 text-primary-600" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
@@ -166,28 +229,16 @@ import { ConfirmationModalComponent, ConfirmationModalConfig } from '../shared/c
               </div>
               
               <div class="mt-6">
-                <label class="block text-sm font-medium text-secondary-700 mb-2">Date of Birth *</label>
+                <label class="block text-sm font-medium text-secondary-700 mb-2">Date of Birth</label>
                 <input 
                   type="date" 
                   name="dateOfBirth"
                   [(ngModel)]="studentFormData.dateOfBirth"
-                  required
                   class="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
                 >
               </div>
-            </div>
 
-            <!-- Contact Information -->
-            <div class="mb-8">
-              <h3 class="text-lg font-semibold text-secondary-900 mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-primary-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
-                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
-                </svg>
-                Contact Information
-              </h3>
-              
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <div>
                   <label class="block text-sm font-medium text-secondary-700 mb-2">Email Address *</label>
                   <input 
@@ -202,29 +253,69 @@ import { ConfirmationModalComponent, ConfirmationModalConfig } from '../shared/c
                 </div>
                 
                 <div>
-                  <label class="block text-sm font-medium text-secondary-700 mb-2">Phone Number *</label>
+                  <label class="block text-sm font-medium text-secondary-700 mb-2">Phone Number</label>
                   <input 
                     type="tel" 
                     name="phoneNumber"
                     [(ngModel)]="studentFormData.phoneNumber"
-                    required
                     class="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
                     placeholder="+1 (555) 000-0000"
                   >
                 </div>
               </div>
-              
+
               <div class="mt-6">
-                <label class="block text-sm font-medium text-secondary-700 mb-2">Address *</label>
+                <label class="block text-sm font-medium text-secondary-700 mb-2">Address</label>
                 <textarea 
                   name="address"
                   [(ngModel)]="studentFormData.address"
-                  required
                   rows="3"
                   class="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors resize-none"
                   placeholder="Enter complete address..."
                 ></textarea>
-                <p class="mt-1 text-xs text-secondary-500">Include street address, city, state, and postal code</p>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div>
+                  <label class="block text-sm font-medium text-secondary-700 mb-2">Password *</label>
+                  <input 
+                    type="password" 
+                    name="password"
+                    [(ngModel)]="studentFormData.password"
+                    required
+                    class="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                    placeholder="Enter password"
+                  >
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-medium text-secondary-700 mb-2">Confirm Password *</label>
+                  <input 
+                    type="password" 
+                    name="confirmPassword"
+                    [(ngModel)]="studentFormData.confirmPassword"
+                    required
+                    class="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                    placeholder="Confirm password"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Read-only User Information (for edit mode) -->
+            <div *ngIf="isEditMode" class="mb-8">
+              <h3 class="text-lg font-semibold text-secondary-900 mb-4">User Information (Read-only)</h3>
+              <div class="bg-secondary-50 p-4 rounded-lg">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <span class="text-sm font-medium text-secondary-700">Name:</span>
+                    <p class="text-sm text-secondary-900">{{ studentFormData.firstName }} {{ studentFormData.lastName }}</p>
+                  </div>
+                  <div>
+                    <span class="text-sm font-medium text-secondary-700">Email:</span>
+                    <p class="text-sm text-secondary-900">{{ studentFormData.email }}</p>
+                  </div>
+                </div>
               </div>
             </div>
             
@@ -271,13 +362,19 @@ export class StudentsComponent implements OnInit {
   
   studentFormData: any = {
     id: 0,
+    userId: '',
     firstName: '',
     lastName: '',
     email: '',
     phoneNumber: '',
     dateOfBirth: '',
-    address: ''
+    address: '',
+    password: '',
+    confirmPassword: '',
+    enrollmentDate: ''
   };
+
+  isCreateWithUser = true; // Default to creating with user
 
   confirmationConfig: ConfirmationModalConfig = {
     title: 'Delete User',
@@ -323,12 +420,15 @@ export class StudentsComponent implements OnInit {
     this.errorMessage = '';
     this.studentFormData = {
       id: student.id,
+      userId: student.userId,
+      enrollmentDate: student.enrollmentDate ? this.errorHandler.formatDateForInput(student.enrollmentDate) : this.errorHandler.formatDateForInput(new Date()),
+      // User fields are readonly in edit mode
       firstName: student.firstName,
       lastName: student.lastName,
       email: student.email,
-      phoneNumber: student.phoneNumber,
-      dateOfBirth: this.errorHandler.formatDateForInput(student.dateOfBirth),
-      address: student.address
+      phoneNumber: student.phoneNumber || '',
+      dateOfBirth: student.dateOfBirth ? this.errorHandler.formatDateForInput(student.dateOfBirth) : '',
+      address: student.address || ''
     };
     this.showStudentModal = true;
   }
@@ -348,23 +448,38 @@ export class StudentsComponent implements OnInit {
 
       if (this.isEditMode) {
         const updateData: UpdateStudentDto = {
-          ...this.studentFormData,
-          dateOfBirth: new Date(this.studentFormData.dateOfBirth)
+          id: this.studentFormData.id,
+          enrollmentDate: this.studentFormData.enrollmentDate ? new Date(this.studentFormData.enrollmentDate) : undefined
         };
         await this.studentService.updateStudent(updateData);
         this.notificationService.showUpdateSuccess('Student');
       } else {
-        const createData: CreateStudentDto = {
-          firstName: this.studentFormData.firstName,
-          lastName: this.studentFormData.lastName,
-          email: this.studentFormData.email,
-          phoneNumber: this.studentFormData.phoneNumber,
-          dateOfBirth: new Date(this.studentFormData.dateOfBirth),
-          address: this.studentFormData.address
-        };
-        console.log('Adding student:', createData);
-        const createdStudent = await this.studentService.createStudent(createData);
-        console.log('Student created successfully:', createdStudent);
+        if (this.isCreateWithUser) {
+          // Create student with new user
+          const createData: CreateStudentWithUserDto = {
+            firstName: this.studentFormData.firstName,
+            lastName: this.studentFormData.lastName,
+            email: this.studentFormData.email,
+            phoneNumber: this.studentFormData.phoneNumber,
+            dateOfBirth: this.studentFormData.dateOfBirth ? new Date(this.studentFormData.dateOfBirth) : undefined,
+            address: this.studentFormData.address,
+            password: this.studentFormData.password,
+            confirmPassword: this.studentFormData.confirmPassword,
+            enrollmentDate: this.studentFormData.enrollmentDate ? new Date(this.studentFormData.enrollmentDate) : undefined
+          };
+          console.log('Creating student with user:', createData);
+          const createdStudent = await this.studentService.createStudentWithUser(createData);
+          console.log('Student created with user successfully:', createdStudent);
+        } else {
+          // Create student with existing user
+          const createData: CreateStudentDto = {
+            userId: this.studentFormData.userId,
+            enrollmentDate: this.studentFormData.enrollmentDate ? new Date(this.studentFormData.enrollmentDate) : undefined
+          };
+          console.log('Creating student with existing user:', createData);
+          const createdStudent = await this.studentService.createStudent(createData);
+          console.log('Student created successfully:', createdStudent);
+        }
         this.notificationService.showCreateSuccess('Student');
       }
 
@@ -419,13 +534,18 @@ export class StudentsComponent implements OnInit {
   private resetForm(): void {
     this.studentFormData = {
       id: 0,
+      userId: '',
       firstName: '',
       lastName: '',
       email: '',
       phoneNumber: '',
-      dateOfBirth: this.errorHandler.formatDateForInput(new Date()),
-      address: ''
+      dateOfBirth: '',
+      address: '',
+      password: '',
+      confirmPassword: '',
+      enrollmentDate: this.errorHandler.formatDateForInput(new Date())
     };
+    this.isCreateWithUser = true;
     this.errorMessage = '';
   }
 

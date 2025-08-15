@@ -16,12 +16,16 @@ namespace SchoolManagement.Repositories.Implementations
 
         public async Task<IEnumerable<Student>> GetAllAsync()
         {
-            return await _context.Students.ToListAsync();
+            return await _context.Students
+                .Include(s => s.User)
+                .ToListAsync();
         }
 
         public async Task<Student?> GetByIdAsync(int id)
         {
-            return await _context.Students.FindAsync(id);
+            return await _context.Students
+                .Include(s => s.User)
+                .FirstOrDefaultAsync(s => s.Id == id);
         }
 
         public async Task<Student> AddAsync(Student student)
@@ -46,6 +50,11 @@ namespace SchoolManagement.Repositories.Implementations
         public async Task<bool> ExistsAsync(int id)
         {
             return await _context.Students.AnyAsync(e => e.Id == id);
+        }
+
+        public async Task<bool> ExistsByUserIdAsync(string userId)
+        {
+            return await _context.Students.AnyAsync(s => s.UserId == userId);
         }
     }
 }
