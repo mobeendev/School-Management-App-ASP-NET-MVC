@@ -10,5 +10,6 @@ namespace SchoolManagement.Repositories.Interfaces
         Task UpdateAsync(Lecturer lecturer);
         Task DeleteAsync(Lecturer lecturer);
         Task<bool> ExistsAsync(int id);
+        Task<bool> ExistsByUserIdAsync(string userId);
     }
 }

@@ -8,11 +8,12 @@ import { ClassDto, CreateClassDto, UpdateClassDto } from '../../models/class.mod
 import { CourseDto } from '../../models/course.model';
 import { SemesterDto, SemesterType } from '../../models/semester.model';
 import { NotificationService } from '../../services/notification.service';
+import { ConfirmationModalComponent, ConfirmationModalConfig } from '../shared/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-classes',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ConfirmationModalComponent],
   template: `
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="flex justify-between items-center mb-6">
@@ -226,6 +227,14 @@ import { NotificationService } from '../../services/notification.service';
         </div>
       </div>
     </div>
+
+    <!-- Confirmation Modal -->
+    <app-confirmation-modal
+      [isVisible]="showConfirmationModal"
+      [config]="confirmationConfig"
+      (confirm)="onConfirmDelete()"
+      (cancel)="onCancelDelete()"
+    ></app-confirmation-modal>
   `,
   styles: []
 })
@@ -236,6 +245,8 @@ export class ClassesComponent implements OnInit {
   isLoading = false;
   showClassModal = false;
   isEditMode = false;
+  showConfirmationModal = false;
+  classToDelete: number | null = null;
 
   classFormData: CreateClassDto & UpdateClassDto = {
     id: 0,
@@ -243,6 +254,15 @@ export class ClassesComponent implements OnInit {
     courseId: 0,
     semesterId: 0,
     maxStudents: 30
+  };
+
+  confirmationConfig: ConfirmationModalConfig = {
+    title: 'Delete Class',
+    message: 'Are you sure you want to permanently delete this class?',
+    details: '',
+    confirmText: 'Delete Permanently',
+    cancelText: 'Cancel',
+    variant: 'danger'
   };
 
   constructor(
@@ -333,11 +353,27 @@ export class ClassesComponent implements OnInit {
     }
   }
 
-  async deleteClass(id: number): Promise<void> {
-    if (confirm('Are you sure you want to delete this class? This action cannot be undone.')) {
+  deleteClass(id: number): void {
+    const classItem = this.classes.find(c => c.id === id);
+    if (classItem) {
+      this.classToDelete = id;
+      this.confirmationConfig = {
+        title: 'Delete Class',
+        message: `Are you sure you want to permanently delete ${classItem.name}?`,
+        details: `<strong>Class:</strong> ${classItem.name}<br><strong>Course:</strong> ${classItem.courseName}<br><strong>Semester:</strong> ${classItem.semesterName}`,
+        confirmText: 'Delete Permanently',
+        cancelText: 'Cancel',
+        variant: 'danger'
+      };
+      this.showConfirmationModal = true;
+    }
+  }
+
+  async onConfirmDelete(): Promise<void> {
+    if (this.classToDelete !== null) {
       try {
         this.isLoading = true;
-        await this.classService.deleteClass(id);
+        await this.classService.deleteClass(this.classToDelete);
         await this.loadClasses();
         this.notificationService.showDeleteSuccess('Class');
       } catch (error) {
@@ -345,8 +381,14 @@ export class ClassesComponent implements OnInit {
         this.notificationService.showDeleteError('class');
       } finally {
         this.isLoading = false;
+        this.onCancelDelete();
       }
     }
+  }
+
+  onCancelDelete(): void {
+    this.showConfirmationModal = false;
+    this.classToDelete = null;
   }
 
   private resetForm(): void {

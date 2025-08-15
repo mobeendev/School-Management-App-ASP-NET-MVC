@@ -59,6 +59,7 @@ namespace SchoolManagement.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(LecturerDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> Create([FromBody] CreateLecturerDto createLecturerDto)
         {
             if (!ModelState.IsValid)
@@ -66,8 +67,15 @@ namespace SchoolManagement.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var createdLecturer = await _lecturerService.CreateLecturerAsync(createLecturerDto);
-            return CreatedAtAction(nameof(GetById), new { id = createdLecturer.Id }, createdLecturer);
+            try
+            {
+                var createdLecturer = await _lecturerService.CreateLecturerAsync(createLecturerDto);
+                return CreatedAtAction(nameof(GetById), new { id = createdLecturer.Id }, createdLecturer);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
         }
 
         /// <summary>

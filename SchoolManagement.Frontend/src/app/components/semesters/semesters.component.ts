@@ -5,11 +5,12 @@ import { SemesterService } from '../../services/semester.service';
 import { ErrorHandlerService } from '../../services/error-handler.service';
 import { SemesterDto, CreateSemesterDto, UpdateSemesterDto, SemesterType } from '../../models/semester.model';
 import { ErrorDisplayComponent } from '../shared/error-display/error-display.component';
+import { ConfirmationModalComponent, ConfirmationModalConfig } from '../shared/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-semesters',
   standalone: true,
-  imports: [CommonModule, FormsModule, ErrorDisplayComponent],
+  imports: [CommonModule, FormsModule, ErrorDisplayComponent, ConfirmationModalComponent],
   template: `
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="flex justify-between items-center mb-6">
@@ -227,6 +228,14 @@ import { ErrorDisplayComponent } from '../shared/error-display/error-display.com
         </div>
       </div>
     </div>
+
+    <!-- Confirmation Modal -->
+    <app-confirmation-modal
+      [isVisible]="showConfirmationModal"
+      [config]="confirmationConfig"
+      (confirm)="onConfirmDelete()"
+      (cancel)="onCancelDelete()"
+    ></app-confirmation-modal>
   `,
   styles: []
 })
@@ -235,6 +244,8 @@ export class SemestersComponent implements OnInit {
   isLoading = false;
   showSemesterModal = false;
   isEditMode = false;
+  showConfirmationModal = false;
+  semesterToDelete: number | null = null;
   semesterTypes = Object.values(SemesterType).filter(value => typeof value === 'number');
   
   semesterFormData: any = {
@@ -242,6 +253,15 @@ export class SemestersComponent implements OnInit {
     type: SemesterType.Spring,
     startDate: '',
     endDate: ''
+  };
+
+  confirmationConfig: ConfirmationModalConfig = {
+    title: 'Delete Semester',
+    message: 'Are you sure you want to permanently delete this semester?',
+    details: '',
+    confirmText: 'Delete Permanently',
+    cancelText: 'Cancel',
+    variant: 'danger'
   };
 
   errorMessage: string = '';
@@ -395,11 +415,28 @@ export class SemestersComponent implements OnInit {
     return start < end;
   }
 
-  async deleteSemester(id: number): Promise<void> {
-    if (confirm('Are you sure you want to delete this semester?')) {
+  deleteSemester(id: number): void {
+    const semester = this.semesters.find(s => s.id === id);
+    if (semester) {
+      this.semesterToDelete = id;
+      const semesterName = `${this.getSemesterTypeString(semester.type)} ${new Date(semester.startDate).getFullYear()}`;
+      this.confirmationConfig = {
+        title: 'Delete Semester',
+        message: `Are you sure you want to permanently delete ${semesterName}?`,
+        details: `<strong>Semester:</strong> ${semesterName}<br><strong>Duration:</strong> ${new Date(semester.startDate).toLocaleDateString()} - ${new Date(semester.endDate).toLocaleDateString()}`,
+        confirmText: 'Delete Permanently',
+        cancelText: 'Cancel',
+        variant: 'danger'
+      };
+      this.showConfirmationModal = true;
+    }
+  }
+
+  async onConfirmDelete(): Promise<void> {
+    if (this.semesterToDelete !== null) {
       try {
         this.isLoading = true;
-        await this.semesterService.deleteSemester(id);
+        await this.semesterService.deleteSemester(this.semesterToDelete);
         await this.loadSemesters();
         alert('Semester deleted successfully!');
       } catch (error) {
@@ -407,7 +444,13 @@ export class SemestersComponent implements OnInit {
         alert('Failed to delete semester. Please try again.');
       } finally {
         this.isLoading = false;
+        this.onCancelDelete();
       }
     }
+  }
+
+  onCancelDelete(): void {
+    this.showConfirmationModal = false;
+    this.semesterToDelete = null;
   }
 }

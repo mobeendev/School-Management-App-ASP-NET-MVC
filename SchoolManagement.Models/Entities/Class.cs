@@ -5,9 +5,11 @@ namespace SchoolManagement.Models.Entities
     public class Class
     {
         public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
         public int? LecturerId { get; set; }
-        public int? CourseId { get; set; }
+        public int CourseId { get; set; }
         public int SemesterId { get; set; }
+        public int MaxStudents { get; set; }
         
         public virtual Course? Course { get; set; }
         public virtual Lecturer? Lecturer { get; set; }

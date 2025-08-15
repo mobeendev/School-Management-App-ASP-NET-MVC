@@ -11,5 +11,6 @@ namespace SchoolManagement.Services.Interfaces
         Task<LecturerDto> UpdateLecturerAsync(LecturerDto lecturerDto);
         Task<bool> DeleteLecturerAsync(int id);
         Task<bool> LecturerExistsAsync(int id);
+        Task<bool> LecturerExistsByUserIdAsync(string userId);
     }
 }

@@ -27,8 +27,6 @@ export interface LecturerDto {
 }
 
 export interface CreateLecturerDto {
-  firstName: string;
-  lastName: string;
   salary: number;
   designation: string;
   qualification: number; // 0-5 enum values

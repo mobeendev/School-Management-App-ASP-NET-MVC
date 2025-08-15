@@ -28,6 +28,12 @@ namespace SchoolManagement.Services.Implementations
 
         public async Task<LecturerDto> CreateLecturerAsync(CreateLecturerDto createLecturerDto)
         {
+            // Check if a lecturer already exists for this user
+            if (await _lecturerRepository.ExistsByUserIdAsync(createLecturerDto.UserId))
+            {
+                throw new InvalidOperationException($"A lecturer already exists for user ID: {createLecturerDto.UserId}");
+            }
+
             var lecturer = MapToEntity(createLecturerDto);
             var createdLecturer = await _lecturerRepository.AddAsync(lecturer);
             return MapToDto(createdLecturer);
@@ -53,6 +59,11 @@ namespace SchoolManagement.Services.Implementations
         public async Task<bool> LecturerExistsAsync(int id)
         {
             return await _lecturerRepository.ExistsAsync(id);
+        }
+
+        public async Task<bool> LecturerExistsByUserIdAsync(string userId)
+        {
+            return await _lecturerRepository.ExistsByUserIdAsync(userId);
         }
 
         private static LecturerDto MapToDto(Lecturer lecturer)

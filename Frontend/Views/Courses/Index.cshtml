@@ -51,34 +51,30 @@
     <input type="hidden" id="courseid" name="id" />
 </form>
 
+<!-- Include the modern delete confirmation modal -->
+<partial name="_DeleteConfirmationModal" />
+
 @section Scripts {
     <script>
         $(function () {
             $('.table').DataTable();
 
             $('.deleteBtn').click(function (e) {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        Swal.fire(
-                            'Deleted!',
-                            'Your file has been deleted.',
-                            'success'
-                        );
-                        var btn = $(this);
-                        var id = btn.data("id");
+                var btn = $(this);
+                var id = btn.data("id");
+                var courseName = btn.closest('tr').find('td:first').text().trim();
+                var courseCode = btn.closest('tr').find('td:nth-child(2)').text().trim();
+                
+                window.deleteConfirmationModal.show({
+                    title: 'Delete Course',
+                    text: 'Are you sure you want to permanently delete this course?',
+                    details: `<strong>Course:</strong> ${courseName}<br><strong>Code:</strong> ${courseCode}`,
+                    onConfirm: function() {
                         $('#courseid').val(id);
                         $('#courseDeleteForm').submit();
                     }
-                })
-            })
-        })
+                });
+            });
+        });
     </script>
 }

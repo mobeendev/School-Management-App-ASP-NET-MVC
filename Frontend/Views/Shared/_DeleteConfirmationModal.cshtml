@@ -1,0 +1,81 @@
+<!-- Modern Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-header border-0 pb-0">
+                <button type="button" class="btn-close position-absolute" data-bs-dismiss="modal" aria-label="Close" style="top: 20px; right: 20px; opacity: 0.5;"></button>
+            </div>
+            <div class="modal-body text-center px-4 pb-4">
+                <div class="mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" 
+                         style="width: 80px; height: 80px; background-color: rgba(220, 53, 69, 0.1);">
+                        <svg width="32" height="32" fill="currentColor" class="text-danger" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
+                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <h4 class="modal-title fw-bold text-dark mb-3" id="deleteConfirmationModalLabel">Delete Item</h4>
+                
+                <p class="text-muted mb-2" id="deleteConfirmationText">
+                    Are you sure you want to permanently delete this item?
+                </p>
+                
+                <div id="deleteItemDetails" class="text-muted small mb-3">
+                </div>
+                
+                <p class="text-muted small">This action cannot be undone.</p>
+                
+                <div class="d-flex gap-3 justify-content-center mt-4">
+                    <button type="button" class="btn btn-secondary px-4 py-2" data-bs-dismiss="modal" style="border-radius: 10px;">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-danger px-4 py-2" id="confirmDeleteBtn" style="border-radius: 10px;">
+                        Delete Permanently
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.deleteConfirmationModal = {
+        show: function(options) {
+            // Set the title
+            if (options.title) {
+                document.getElementById('deleteConfirmationModalLabel').textContent = options.title;
+            }
+            
+            // Set the confirmation text
+            if (options.text) {
+                document.getElementById('deleteConfirmationText').textContent = options.text;
+            }
+            
+            // Set item details
+            const detailsEl = document.getElementById('deleteItemDetails');
+            if (options.details) {
+                detailsEl.innerHTML = options.details;
+                detailsEl.style.display = 'block';
+            } else {
+                detailsEl.style.display = 'none';
+            }
+            
+            // Set up the confirm button click handler
+            const confirmBtn = document.getElementById('confirmDeleteBtn');
+            confirmBtn.onclick = function() {
+                if (options.onConfirm) {
+                    options.onConfirm();
+                }
+                // Hide the modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmationModal'));
+                modal.hide();
+            };
+            
+            // Show the modal
+            const modal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
+            modal.show();
+        }
+    };
+</script>

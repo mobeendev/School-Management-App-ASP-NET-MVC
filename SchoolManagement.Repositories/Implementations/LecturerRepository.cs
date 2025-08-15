@@ -51,5 +51,10 @@ namespace SchoolManagement.Repositories.Implementations
         {
             return await _context.Lecturers.AnyAsync(l => l.Id == id);
         }
+
+        public async Task<bool> ExistsByUserIdAsync(string userId)
+        {
+            return await _context.Lecturers.AnyAsync(l => l.UserId == userId);
+        }
     }
 }

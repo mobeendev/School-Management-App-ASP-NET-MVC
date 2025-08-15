@@ -7,11 +7,12 @@ import { Qualification } from '../../models/enums';
 import { UserManagementService } from '../../services/user-management.service';
 import { UserByRoleDto } from '../../models/user-management.model';
 import { NotificationService } from '../../services/notification.service';
+import { ConfirmationModalComponent, ConfirmationModalConfig } from '../shared/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-lecturers',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ConfirmationModalComponent],
   template: `
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="flex justify-between items-center mb-6">
@@ -309,6 +310,14 @@ import { NotificationService } from '../../services/notification.service';
         </div>
       </div>
     </div>
+
+    <!-- Confirmation Modal -->
+    <app-confirmation-modal
+      [isVisible]="showConfirmationModal"
+      [config]="confirmationConfig"
+      (confirm)="onConfirmDelete()"
+      (cancel)="onCancelDelete()"
+    ></app-confirmation-modal>
   `,
   styles: []
 })
@@ -318,10 +327,10 @@ export class LecturersComponent implements OnInit {
   availableUsers: UserByRoleDto[] = [];
   selectedUser: UserByRoleDto | null = null;
   isLoading = false;
+  showConfirmationModal = false;
+  lecturerToDelete: number | null = null;
   
   newLecturer: CreateLecturerDto = {
-    firstName: '',
-    lastName: '',
     salary: 0,
     designation: '',
     qualification: 0, // Use number instead of enum
@@ -330,6 +339,15 @@ export class LecturersComponent implements OnInit {
     teachingHoursPerWeek: 0,
     status: 'Active',
     userId: ''
+  };
+
+  confirmationConfig: ConfirmationModalConfig = {
+    title: 'Delete User',
+    message: 'Are you sure you want to permanently delete this user?',
+    details: '',
+    confirmText: 'Delete Permanently',
+    cancelText: 'Cancel',
+    variant: 'danger'
   };
 
   constructor(
@@ -370,11 +388,6 @@ export class LecturersComponent implements OnInit {
 
   onUserSelected(userId: string): void {
     this.selectedUser = this.availableUsers.find(user => user.id === userId) || null;
-    if (this.selectedUser) {
-      // Auto-fill user details
-      this.newLecturer.firstName = this.selectedUser.firstName;
-      this.newLecturer.lastName = this.selectedUser.lastName;
-    }
   }
 
   closeAddLecturerModal(): void {
@@ -419,11 +432,27 @@ export class LecturersComponent implements OnInit {
     alert(`Edit functionality for ${lecturer.firstName} ${lecturer.lastName} will be implemented soon.`);
   }
 
-  async deleteLecturer(id: number): Promise<void> {
-    if (confirm('Are you sure you want to delete this lecturer?')) {
+  deleteLecturer(id: number): void {
+    const lecturer = this.lecturers.find(l => l.id === id);
+    if (lecturer) {
+      this.lecturerToDelete = id;
+      this.confirmationConfig = {
+        title: 'Delete User',
+        message: `Are you sure you want to permanently delete ${lecturer.firstName} ${lecturer.lastName}?`,
+        details: `<strong>Email:</strong> N/A<br><strong>Role:</strong> Lecturer`,
+        confirmText: 'Delete Permanently',
+        cancelText: 'Cancel',
+        variant: 'danger'
+      };
+      this.showConfirmationModal = true;
+    }
+  }
+
+  async onConfirmDelete(): Promise<void> {
+    if (this.lecturerToDelete !== null) {
       try {
         this.isLoading = true;
-        await this.lecturerService.deleteLecturer(id);
+        await this.lecturerService.deleteLecturer(this.lecturerToDelete);
         await this.loadLecturers();
         this.notificationService.showDeleteSuccess('Lecturer');
       } catch (error) {
@@ -431,8 +460,14 @@ export class LecturersComponent implements OnInit {
         this.notificationService.showDeleteError('lecturer');
       } finally {
         this.isLoading = false;
+        this.onCancelDelete();
       }
     }
+  }
+
+  onCancelDelete(): void {
+    this.showConfirmationModal = false;
+    this.lecturerToDelete = null;
   }
 
   getQualificationName(qualification: number): string {
@@ -450,8 +485,6 @@ export class LecturersComponent implements OnInit {
   private resetForm(): void {
     this.selectedUser = null;
     this.newLecturer = {
-      firstName: '',
-      lastName: '',
       salary: 0,
       designation: '',
       qualification: 0, // Use number instead of enum

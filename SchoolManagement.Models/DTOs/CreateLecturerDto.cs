@@ -4,8 +4,6 @@ namespace SchoolManagement.Models.DTOs
 {
     public class CreateLecturerDto
     {
-        public string FirstName { get; set; } = null!;
-        public string LastName { get; set; } = null!;
         public int Salary { get; set; }
         public string Designation { get; set; } = null!;
         public Qualification Qualification { get; set; }

@@ -6,11 +6,12 @@ import { ErrorHandlerService } from '../../services/error-handler.service';
 import { StudentDto, CreateStudentDto, UpdateStudentDto } from '../../models/student.model';
 import { ErrorDisplayComponent } from '../shared/error-display/error-display.component';
 import { NotificationService } from '../../services/notification.service';
+import { ConfirmationModalComponent, ConfirmationModalConfig } from '../shared/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-students',
   standalone: true,
-  imports: [CommonModule, FormsModule, ErrorDisplayComponent],
+  imports: [CommonModule, FormsModule, ErrorDisplayComponent, ConfirmationModalComponent],
   template: `
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="flex justify-between items-center mb-6">
@@ -249,6 +250,14 @@ import { NotificationService } from '../../services/notification.service';
         </div>
       </div>
     </div>
+
+    <!-- Confirmation Modal -->
+    <app-confirmation-modal
+      [isVisible]="showConfirmationModal"
+      [config]="confirmationConfig"
+      (confirm)="onConfirmDelete()"
+      (cancel)="onCancelDelete()"
+    ></app-confirmation-modal>
   `,
   styles: []
 })
@@ -257,6 +266,8 @@ export class StudentsComponent implements OnInit {
   isLoading = false;
   showStudentModal = false;
   isEditMode = false;
+  showConfirmationModal = false;
+  studentToDelete: number | null = null;
   
   studentFormData: any = {
     id: 0,
@@ -266,6 +277,15 @@ export class StudentsComponent implements OnInit {
     phoneNumber: '',
     dateOfBirth: '',
     address: ''
+  };
+
+  confirmationConfig: ConfirmationModalConfig = {
+    title: 'Delete User',
+    message: 'Are you sure you want to permanently delete this user?',
+    details: '',
+    confirmText: 'Delete Permanently',
+    cancelText: 'Cancel',
+    variant: 'danger'
   };
 
   errorMessage: string = '';
@@ -358,11 +378,27 @@ export class StudentsComponent implements OnInit {
     }
   }
 
-  async deleteStudent(id: number): Promise<void> {
-    if (confirm('Are you sure you want to delete this student?')) {
+  deleteStudent(id: number): void {
+    const student = this.students.find(s => s.id === id);
+    if (student) {
+      this.studentToDelete = id;
+      this.confirmationConfig = {
+        title: 'Delete User',
+        message: `Are you sure you want to permanently delete ${student.firstName} ${student.lastName}?`,
+        details: `<strong>Email:</strong> ${student.email}<br><strong>Role:</strong> Student`,
+        confirmText: 'Delete Permanently',
+        cancelText: 'Cancel',
+        variant: 'danger'
+      };
+      this.showConfirmationModal = true;
+    }
+  }
+
+  async onConfirmDelete(): Promise<void> {
+    if (this.studentToDelete !== null) {
       try {
         this.isLoading = true;
-        await this.studentService.deleteStudent(id);
+        await this.studentService.deleteStudent(this.studentToDelete);
         await this.loadStudents();
         this.notificationService.showDeleteSuccess('Student');
       } catch (error) {
@@ -370,8 +406,14 @@ export class StudentsComponent implements OnInit {
         this.notificationService.showDeleteError('student');
       } finally {
         this.isLoading = false;
+        this.onCancelDelete();
       }
     }
+  }
+
+  onCancelDelete(): void {
+    this.showConfirmationModal = false;
+    this.studentToDelete = null;
   }
 
   private resetForm(): void {

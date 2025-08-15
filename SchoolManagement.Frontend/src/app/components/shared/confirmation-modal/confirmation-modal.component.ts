@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 export interface ConfirmationModalConfig {
   title: string;
   message: string;
+  details?: string;
   confirmText?: string;
   cancelText?: string;
   variant?: 'warning' | 'danger' | 'info';
