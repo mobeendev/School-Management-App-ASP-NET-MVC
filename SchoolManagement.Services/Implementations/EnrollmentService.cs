@@ -44,7 +44,8 @@ namespace SchoolManagement.Services.Implementations
             {
                 StudentId = createEnrollmentDto.StudentId,
                 ClassId = createEnrollmentDto.ClassId,
-                SemesterId = createEnrollmentDto.SemesterId
+                SemesterId = createEnrollmentDto.SemesterId,
+                Grade = createEnrollmentDto.Grade
             };
 
             var createdEnrollment = await _enrollmentRepository.AddAsync(enrollment);

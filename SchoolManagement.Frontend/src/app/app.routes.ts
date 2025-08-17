@@ -58,5 +58,9 @@ export const routes: Routes = [
     path: 'user-management', 
     loadComponent: () => import('./components/user-management/user-management.component').then(m => m.UserManagementComponent)
   },
+  { 
+    path: 'profile', 
+    loadComponent: () => import('./components/profile/profile.component').then(m => m.ProfileComponent)
+  },
   { path: '**', redirectTo: '/home' }
 ];

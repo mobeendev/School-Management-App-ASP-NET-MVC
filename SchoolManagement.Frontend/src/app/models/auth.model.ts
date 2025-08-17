@@ -41,3 +41,27 @@ export interface ApiResponse<T> {
   message?: string;
   errors?: string[];
 }
+
+export interface ProfileDto {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber?: string;
+  gender?: string;
+  address?: string;
+  dateOfBirth?: string;
+  userName: string;
+  roles: string[];
+  createdDate: string;
+}
+
+export interface UpdateProfileDto {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber?: string;
+  gender?: string;
+  address?: string;
+  dateOfBirth?: string;
+}

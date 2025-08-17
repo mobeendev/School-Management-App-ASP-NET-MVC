@@ -22,6 +22,7 @@ namespace SchoolManagement.Models.DTOs
         public int StudentId { get; set; }
         public int ClassId { get; set; }
         public int SemesterId { get; set; }
+        public string? Grade { get; set; }
     }
 
     public class UpdateEnrollmentDto

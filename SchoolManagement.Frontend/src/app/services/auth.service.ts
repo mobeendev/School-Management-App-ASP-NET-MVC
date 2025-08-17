@@ -46,7 +46,18 @@ export class AuthService {
 
   async login(loginRequest: LoginRequest): Promise<LoginResponse> {
     try {
-      const response = await firstValueFrom(this.http.post<LoginResponse>(`${this.apiUrl}/Account/Login`, loginRequest));
+      const headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      });
+      
+      console.log('Making login request to:', `${this.apiUrl}/Account/Login`);
+      console.log('Request payload:', loginRequest);
+      console.log('Request headers:', headers);
+      
+      const response = await firstValueFrom(
+        this.http.post<LoginResponse>(`${this.apiUrl}/Account/Login`, loginRequest, { headers })
+      );
       
       if (response && response.token) {
         console.log('AuthService - Login successful, storing user data:', response);
@@ -70,8 +81,16 @@ export class AuthService {
       } else {
         throw new Error('Invalid login response');
       }
-    } catch (error) {
-      console.error('Login error:', error);
+    } catch (error: any) {
+      console.error('Login error details:', error);
+      console.error('Error status:', error.status);
+      console.error('Error message:', error.message);
+      console.error('Full error object:', error);
+      
+      if (error.status === 0) {
+        throw new Error('Cannot connect to server. Please check if the backend API is running at http://localhost:5000');
+      }
+      
       throw error;
     }
   }
